@@ -28,7 +28,7 @@ def ForbiddenUsernamesValidator(value):
                            'user', 'users', 'billing', 'subscribe', 'reviews',
                            'review', 'blog', 'blogs', 'edit', 'mail', 'email',
                            'home', 'job', 'jobs', 'contribute', 'newsletter',
-                           'shop', 'profile', 'register', 'auth',
+                           'shop', 'profile', 'register', 'auth', 'labs'
                            'authentication', 'campaign', 'config', 'delete',
                            'remove', 'forum', 'forums', 'download',
                            'downloads', 'contact', 'blogs', 'feed', 'feeds',

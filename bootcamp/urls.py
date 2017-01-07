@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^feeds/', include('bootcamp.feeds.urls')),
     url(r'^questions/', include('bootcamp.questions.urls')),
     url(r'^projects/', include('bootcamp.projects.urls')),
+    url(r'^labs/', include('bootcamp.project_labs.urls')),
     url(r'^messages/', include('bootcamp.messenger.urls')),
     url(r'^notifications/$', activities_views.notifications,
         name='notifications'),
