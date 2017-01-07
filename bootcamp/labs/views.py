@@ -7,8 +7,8 @@ from django.contrib import messages
 
 import bootcamp.core.all_users as all_users
 import markdown
-from bootcamp.project_labs.forms import LabForm
-from bootcamp.project_labs.models import Lab, Tag
+from bootcamp.labs.forms import LabForm
+from bootcamp.labs.models import Lab, Tag
 from bootcamp.decorators import ajax_required
 
 LABS_NUM_PAGES = 100

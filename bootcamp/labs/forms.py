@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
-from bootcamp.project_labs.models import Lab
+from bootcamp.labs.models import Lab
 import floppyforms
 
 
-#To add new project_labs, can only be accessed by lab manager
+#To add new labs, can only be accessed by lab manager
 class LabForm(forms.ModelForm):
     
     status = forms.CharField(widget=forms.HiddenInput())
