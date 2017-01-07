@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+  <script src="{% static 'js/projects.js' %}"></script>
+{% endblock head %}
+
+{% block main %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'projects' %}">{% trans 'Projects' %}</a></li>
+    <li class="active">{% trans 'Project' %}</li>
+  </ol>
+  
+  <project>
+  <h2><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h2>
+  
+  
+  <div class="info">
+    <span class="date">
+      <span class="glyphicon glyphicon-calendar"></span>
+      {{ project.create_date }}
+    </span>
+    <span class="user">
+      <a href="{% url 'profile' project.create_user.username %}"><img src="{{ project.create_user.profile.get_picture }}"></a>
+      <a href="{% url 'profile' project.create_user.username %}">{{ project.create_user.profile.get_screen_name }}</a>
+    </span>
+    <span class="comments">
+      <span class="glyphicon glyphicon-comment"></span>
+      {{ project.get_comments.count }} Comments
+    </span>
+    <span class="edit">
+      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+    </span>
+  </div>
+  </project>
+  
+
+	
+
+
+<div id="exTab3" class="container">	
+<ul  class="nav nav-pills">
+			<li class="active">
+        <a href="#1" data-toggle="tab">Project Abstract</a>
+			</li>
+			<li><a href="#2" data-toggle="tab">Project Description</a>
+			</li>
+			<li><a href="#3" data-toggle="tab">Collaborators</a>
+			</li>
+  		<li><a href="#4" data-toggle="tab">Materials</a>
+			</li>
+			<li><a href="#5" data-toggle="tab">Tags</a>
+			</li>
+		</ul>
+
+			<div class="tab-content clearfix">
+			  <div class="tab-pane active" id="1">
+            <div class="content">
+    {{ project.get_description_as_markdown|safe }}
+	  </div>
+		</div>
+				<div class="tab-pane" id="2">
+          <div class="content">
+    {{ project.get_description_as_markdown|safe }}
+	  </div>
+				</div>
+        <div class="tab-pane" id="3">
+        <ul>
+          {% for each in project.get_collaborators %}
+          <li><span class="user">
+      <a href="{% url 'profile' each.user.username %}"><img src="{{ each.user.profile.get_picture }}"></a>
+      <a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a>
+    </span> </li>
+          {% endfor %}
+         </ul> 
+          
+				</div>
+          <div class="tab-pane" id="4">
+          <ul>
+          {% for each in project.get_materials %}
+          <li> {{each}}</li>
+          {% endfor %}
+         </ul>
+				</div>
+				<div class="tab-pane" id="5">
+          		{% if project.get_tags %}
+    <div class="tags">
+      {% for tag in project.get_tags %}
+        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+				</div>
+		
+				
+				
+				</div>
+  </div>
+
+
+
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+
+  
+  {% include 'projects/partial_project_comments.html' with project=project %}
+{% endblock main %}

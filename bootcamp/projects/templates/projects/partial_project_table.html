@@ -1,0 +1,46 @@
+<tr>
+  <td><a href="{% url 'project' project.slug %}">{{ project.title }}</a></td>
+  <div class="info">
+  	
+  	<td><div class="content">
+    {{ project.get_description_as_markdown|safe }}
+  </div></td>
+  
+  <td><div class="content">
+    {{ project.get_collaborators_comma_delimited }}
+  </div></td>
+  <td>
+  {% if project.get_tags %}
+    <div class="tags">
+      {% for tag in project.get_tags %}
+        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+ </td>
+ <td>
+ <span class="user_image">
+      <a href="{% url 'profile' project.create_user.username %}"><img width="40px" border-radius="20px" src="{{ project.create_user.profile.get_picture }}" alt="Profile Image"></a><br/>
+      <a href="{% url 'profile' project.create_user.username %}">{{ project.create_user.profile.get_screen_name }}</a>
+    </span>
+   </td>
+ 
+  
+    <td><span class="date">
+      <span class="glyphicon glyphicon-calendar"></span>
+      {{ project.create_date }}
+    </span></td>
+    
+    <td><span class="comments">
+      <span class="glyphicon glyphicon-comment"></span>
+      {{ project.get_comments.count }} Comments
+    </span></td>
+    <td>
+    <span class="edit">
+      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+    </span>
+    </td>
+  </div>
+  
+  
+</tr>

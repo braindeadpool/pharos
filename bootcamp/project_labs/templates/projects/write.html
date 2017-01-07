@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/projects.js' %}"></script>
+{% endblock head %}
+
+{% block main %}
+  <script type="text/javascript">
+                                    $(document).ready(function() {
+                                      
+									    
+								//@naresh action dynamic childs
+    var nextedu = 0;
+    $("#add-more").click(function(e){
+        e.preventDefault();
+        var addto = "#field" + nextedu;
+        var addRemove = "#field" + (nextedu);
+        nextedu = nextedu + 1;
+        var newIn = 	'<div id="field'+ nextedu +'"><div class="form-group"> <label class="col-md-3">Material Name*</label> <div class="col-md-8"> <input type="text"  name="material[]" id="material" class="form-control" list= {{form.material_name}} > </div></div><br><br><!-- Text input--><div class="form-group"> <label class="col-md-3">Material Category*</label> <div class="col-md-8"> <input type="text"  name="category[]" id="category" class="form-control" list= {{form.category_list}} > </div></div>				<br><br>		<hr>	</div>';
+        var newInput = $(newIn);
+	
+        var removeBtn = '<button id="remove' + (nextedu - 1) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
+        var removeButton = $(removeBtn);
+        $(addto).after(newInput);
+        $(addRemove).after(removeButton);
+        $("#field" + nextedu).attr('data-source',$(addto).attr('data-source'));
+        $("#count").val(nextedu);  
+        
+            $('.remove-me').click(function(e){
+                e.preventDefault();
+                var fieldNum = this.id.charAt(this.id.length-1);
+                var fieldID = "#field" + fieldNum;
+                $(this).remove();
+                $(fieldID).remove();
+            });
+    }); 
+    });
+                                    
+                                </script>
+	
+
+  <ol class="breadcrumb">
+    <li><a href="{% url 'projects' %}">{% trans 'projects' %}</a></li>
+    <li class="active">{% trans 'Write project' %}</li>
+  </ol>
+  <form action="{% url 'write' %}" method="post" role="form">
+    {% csrf_token %}
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+          {% include 'markdown_editor.html' with textarea='id_content' %}
+        {% endif %}
+        {{ field }}
+        {% if field.help_text %}
+          <span class="help-block">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <fieldset id="material_information" class="">
+					<legend>Add Materials</legend>
+			
+              <div class="col-md-12" >
+                <div id="field">
+                <div id="field0">
+
+<!-- Text input-->
+<div class="form-group">
+ <label class="col-md-3">Material Name*</label>
+ <div class="col-md-8">
+ <input type="text"  name="material[]" id="material" class="form-control" list= {{form.material_name}} > 
+</div>
+</div>
+<br><br>
+
+<!-- Text input-->
+<div class="form-group">
+ <label class="col-md-3">Material Category*</label>
+ <div class="col-md-8">
+ <input type="text"  name="category[]" id="category" class="form-control" list= {{form.category_list}} > 
+</div>
+</div>
+<br><br>
+
+<hr>
+
+
+</div><!--end field0-->
+</div><!--end field-->
+  <!-- Button -->
+<div class="form-group">
+  <div class="col-md-4 col-md-offset-8">
+    <button id="add-more" name="add-more" class="btn btn-primary">Add More</button>
+  </div>
+</div>
+<br><br>      
+            </div>
+					
+				</fieldset>
+				 				
+				
+    
+    <div class="form-group">
+      <button type="button" class="btn btn-primary publish">{% trans 'Publish' %}</button>
+      <button type="button" class="btn btn-default draft">{% trans 'Save Draft' %}</button>
+      <button type="button" class="btn btn-default preview" data-toggle="modal" data-target="#preview">{% trans 'Preview' %}</button>
+      <a href="{% url 'projects' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+    </div>
+  </form>
+
+  <div class="modal fade" id="preview">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Project Preview</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock main %}
