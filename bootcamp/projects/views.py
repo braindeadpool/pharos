@@ -119,6 +119,7 @@ def drafts(request):
 
 @login_required
 def edit(request, id):
+    print "Ok reached here"
     tags = ''
     if id:
         project = get_object_or_404(Project, pk=id)
@@ -134,7 +135,7 @@ def edit(request, id):
         messages.add_message(request, messages.ERROR,
                                  'You are not authorized to edit this Project- ' + project.title + '. Only collaborators can edit their Project')
         return redirect('/projects/')
-
+    
     if request.POST:
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
@@ -147,7 +148,7 @@ def edit(request, id):
             project.create_tags(tags)
             return redirect('/projects/')
     else:
-        form = ProjectForm(instance=Project)
+        form = ProjectForm(instance=project)
         form.fields['tags'].initial = tags
         form.fields['collaborators'].initial = collaborators
         print form.fields['collaborators']

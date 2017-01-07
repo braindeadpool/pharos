@@ -150,8 +150,8 @@ class ProjectComment(models.Model):
     user = models.ForeignKey(User)
 
     class Meta:
-        verbose_name = _("project Comment")
-        verbose_name_plural = _("project Comments")
+        verbose_name = _("Project Comment")
+        verbose_name_plural = _("Project Comments")
         ordering = ("date",)
 
     def __str__(self):
