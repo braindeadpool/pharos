@@ -3,12 +3,12 @@
 {% load i18n %}
 
 {% block head %}
-  <script src="{% static 'js/projects.js' %}"></script>
+  <script src="{% static 'js/samples.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
   <ol class="breadcrumb">
-    <li><a href="{% url 'projects' %}">{% trans 'projects' %}</a></li>
+    <li><a href="{% url 'samples' %}">{% trans 'samples' %}</a></li>
     <li class="active">{% trans 'Drafts' %}</li>
   </ol>
   <table class="table table-striped">
@@ -20,12 +20,12 @@
       </tr>
     </thead>
     <tbody>
-      {% for project in drafts %}
+      {% for sample in drafts %}
         <tr>
-          <td><a href="{% url 'edit_project' project.pk %}">{{ project.title }}</a></td>
-          <td>{{ project.get_summary_as_markdown|safe }}</td>
+          <td><a href="{% url 'edit_sample' sample.pk %}">{{ sample.title }}</a></td>
+          <td>{{ sample.get_summary_as_markdown|safe }}</td>
           <td>
-            {% for tag in project.get_tags %}
+            {% for tag in sample.get_tags %}
               <span class="label label-default">{{ tag }}</span>
             {% endfor %}
           </td>

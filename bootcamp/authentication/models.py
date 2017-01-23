@@ -13,10 +13,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from bootcamp.activities.models import Notification
 
 
-
 @python_2_unicode_compatible
 class Profile(models.Model):
     user = models.OneToOneField(User)
+    identification = models.CharField(max_length=50)
     role = models.CharField(max_length=50, null=True, blank=True)
     web_page = models.CharField(max_length=50, null=True, blank=True)
     role = models.CharField(max_length=50, null=True, blank=True)
@@ -157,7 +157,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-    
+
+
 class LinkedInProfile(models.Model):
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)

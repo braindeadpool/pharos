@@ -1,5 +1,3 @@
-
-
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
@@ -12,13 +10,12 @@ from bootcamp.search import views as search_views
 
 from django.contrib import admin
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', core_views.home, name='home'),
     url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
-         name='login'),
-#     url(r'^login/$', linkedin_views.oauth_login, name='login'),
+        name='login'),
+    # url(r'^login/$', linkedin_views.oauth_login, name='login'),
     url(r'^add_linkedIn', core_views.linkedinRedirection, name='linkedin'),
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/$', bootcamp_auth_views.signup, name='signup'),
@@ -34,7 +31,10 @@ urlpatterns = [
     url(r'^feeds/', include('bootcamp.feeds.urls')),
     url(r'^questions/', include('bootcamp.questions.urls')),
     url(r'^projects/', include('bootcamp.projects.urls')),
-    url(r'^labs/', include('bootcamp.labs.urls')),
+    url(r'^devices/', include('bootcamp.devices.urls')),
+    url(r'^scan/', include('bootcamp.scanner.urls')),
+    url(r'^samples/', include('bootcamp.samples.urls')),
+    #url(r'^labs/', include('bootcamp.labs.urls')),
     url(r'^messages/', include('bootcamp.messenger.urls')),
     url(r'^notifications/$', activities_views.notifications,
         name='notifications'),
@@ -46,7 +46,7 @@ urlpatterns = [
     url(r'^(?P<username>[^/]+)/$', core_views.profile, name='profile'),
     url(r'^(?P<username>[^/]+)/add_linkedin/$', core_views.addLinkedInProfile, name='add_linkedin'),
     url(r'^i18n/', include('django.conf.urls.i18n', namespace='i18n')),
-    
+
 ]
 
 if settings.DEBUG:

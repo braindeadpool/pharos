@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block head %}
-<script src="{% static 'js/projects.js' %}"></script>
+<script src="{% static 'js/samples.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
@@ -43,8 +43,8 @@
 
 
 <ol class="breadcrumb">
-    <li><a href="{% url 'projects' %}">{% trans 'projects' %}</a></li>
-    <li class="active">{% trans 'Write project' %}</li>
+    <li><a href="{% url 'samples' %}">{% trans 'samples' %}</a></li>
+    <li class="active">{% trans 'Write sample' %}</li>
 </ol>
 <form action="{% url 'write' %}" method="post" role="form">
     {% csrf_token %}
@@ -113,7 +113,7 @@
         <button type="button" class="btn btn-default draft">{% trans 'Save Draft' %}</button>
         <button type="button" class="btn btn-default preview" data-toggle="modal" data-target="#preview">{% trans 'Preview' %}
         </button>
-        <a href="{% url 'projects' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        <a href="{% url 'samples' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
     </div>
 </form>
 
@@ -122,7 +122,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Project Preview</h4>
+                <h4 class="modal-title">Sample Preview</h4>
             </div>
             <div class="modal-body"></div>
             <div class="modal-footer">

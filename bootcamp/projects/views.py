@@ -8,7 +8,7 @@ from django.contrib import messages
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.projects.forms import ProjectForm
-from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material
+from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Sample
 from bootcamp.decorators import ajax_required
 
 PROJECTS_NUM_PAGES = 100
@@ -24,6 +24,7 @@ def _projects(request, projects):
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
     popular_tags = Tag.get_popular_tags()
+    print projects
     return render(request, 'projects/projects.html', {
         'projects': projects,
         'popular_tags': popular_tags
@@ -39,9 +40,8 @@ def projects(request):
 @login_required
 def projectsByUser(request):
     all_projects = Project.objects.filter(create_user=request.user,
-                                    status=Project.PUBLISHED)
+                                          status=Project.PUBLISHED)
     return _projects(request, all_projects)
-
 
 
 @login_required
@@ -63,12 +63,14 @@ def tag(request, tag_name):
 
 
 def persist_collaborators(collaborators, proj):
-    #collaborators is a list, for each request we need to persist them
+    # collaborators is a list, for each request we need to persist them
     userMap = all_users.getUserDictionary()
+    print userMap
     for each in collaborators:
-        t, created = Collaborator.objects.get_or_create(project = proj,
-                                                        user = userMap[each])
-        
+        t, created = Collaborator.objects.get_or_create(project=proj,
+                                                        user=userMap[each])
+
+
 @login_required
 def write(request):
     if request.method == 'POST':
@@ -81,10 +83,10 @@ def write(request):
             collaborators = form.cleaned_data.get('collaborators')
             collaborators.append(request.user.username)
             collaborators = set(collaborators)
-            
-            print "The collaborators are: "            
+
+            print "The collaborators are: "
             print collaborators
-            
+
             status = form.cleaned_data.get('status')
             if status in [Project.PUBLISHED, Project.DRAFT]:
                 project.status = form.cleaned_data.get('status')
@@ -92,9 +94,9 @@ def write(request):
             persist_collaborators(collaborators, project)
             tags = form.cleaned_data.get('tags')
             project.create_tags(tags)
-            
-            #get materials
-            material =  request.POST.getlist('material[]')
+
+            # get materials and devices
+            material = request.POST.getlist('material[]')
             category = request.POST.getlist('category[]')
             for i in range(len(material)):
                 toInsert = Material()
@@ -102,7 +104,18 @@ def write(request):
                 toInsert.category = category[i]
                 toInsert.project = project
                 toInsert.save()
-            
+
+            device = request.POST.getlist('device[]')
+            device_id = request.POST.getlist('device_identification[]')
+            device_location = request.POST.getlist('device_location[]')
+            for i in range(len(device)):
+                toInsert = Device()
+                toInsert.name = device[i]
+                toInsert.identification = device_id[i]
+                toInsert.location = device_location[i]
+                toInsert.project = project
+                toInsert.save()
+
             return redirect('/projects/')
     else:
         print "rendering init form"
@@ -126,16 +139,16 @@ def edit(request, id):
         for tag in project.get_tags():
             tags = '{0} {1}'.format(tags, tag.tag)
         tags = tags.strip()
-        collaborators = [x.user.username for x in  project.get_collaborators()]
+        collaborators = [x.user.username for x in project.get_collaborators()]
         print collaborators
     else:
         project = Project(create_user=request.user)
 
     if request.user.username not in collaborators:
         messages.add_message(request, messages.ERROR,
-                                 'You are not authorized to edit this Project- ' + project.title + '. Only collaborators can edit their Project')
+                             'You are not authorized to edit this Project- ' + project.title + '. Only collaborators can edit their Project')
         return redirect('/projects/')
-    
+
     if request.POST:
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():

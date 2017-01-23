@@ -8,6 +8,8 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from bootcamp.samples import models as samples_models
+
 import markdown
 
 
@@ -29,8 +31,6 @@ class Project(models.Model):
     update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, null=True, blank=True,
                                     related_name="+")
-    
-    
 
     class Meta:
         verbose_name = _("Project")
@@ -60,7 +60,7 @@ class Project(models.Model):
 
     @staticmethod
     def get_published_by_user(user):
-        projects = Project.objects.filter(status=Project.PUBLISHED, create_user = user)
+        projects = Project.objects.filter(status=Project.PUBLISHED, create_user=user)
         return projects
 
     def create_tags(self, tags):
@@ -73,18 +73,20 @@ class Project(models.Model):
 
     def get_tags(self):
         return Tag.objects.filter(project=self)
-    
+
     def delete_tags(self):
         Tag.objects.filter(project=self).delete()
-    
+
     def delete_collaborators(self):
         Collaborator.objects.filter(project=self).delete()
-    
+
     def get_collaborators(self):
         return Collaborator.objects.filter(project=self)
-    
+
+    def get_devices(self):
+        return Device.objects.filter(project=self)
+
     def get_materials(self):
-        print "here"
         all = Material.objects.filter(project=self)
         to_return = []
         print all
@@ -93,7 +95,17 @@ class Project(models.Model):
         print "the materials are"
         print to_return
         return to_return
-    
+
+    def get_samples(self):
+        all = Sample.objects.filter(project=self)
+        to_return = []
+        print all
+        for each in all:
+            to_return.append(each)
+        print "the samples are"
+        print to_return
+        return to_return
+
     def get_collaborators_comma_delimited(self):
         all = Collaborator.objects.filter(project=self)
         to_return = []
@@ -166,8 +178,8 @@ class Collaborator(models.Model):
 
     @staticmethod
     def get_published_by_user(userid):
-        objs = Collaborator.objects.filter(user = userid)
-        projects = [ x.project for x in objs if (x.project.status == Project.PUBLISHED)]
+        objs = Collaborator.objects.filter(user=userid)
+        projects = [x.project for x in objs if (x.project.status == Project.PUBLISHED)]
         return projects
 
     class Meta:
@@ -177,14 +189,13 @@ class Collaborator(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
-    
-    
+
+
 class Material(models.Model):
     project = models.ForeignKey(Project)
     date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
-
 
     class Meta:
         verbose_name = _("Material")
@@ -192,4 +203,35 @@ class Material(models.Model):
         ordering = ("name",)
 
     def __str__(self):
-        return '{0} - {1}'.format(self.name, self.category )
+        return '{0} - {1}'.format(self.name, self.category)
+
+
+class Device(models.Model):
+    project = models.ForeignKey(Project)
+    identification = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _("Device")
+        verbose_name_plural = _("Devices")
+        ordering = ("name",)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.name, self.location)
+
+
+class Sample(models.Model):
+    project = models.ForeignKey(Project)
+    sample = models.ForeignKey(samples_models.Sample)
+    date = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _("Sample")
+        verbose_name_plural = _("Samples")
+        ordering = ("name",)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.name, self.category)

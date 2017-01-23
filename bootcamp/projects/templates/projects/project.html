@@ -5,112 +5,138 @@
 {% block title %}{{ project.title }}{% endblock %}
 
 {% block head %}
-  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
-  <script src="{% static 'js/projects.js' %}"></script>
+<link href="{% static 'css/projects.css' %}" rel="stylesheet">
+<script src="{% static 'js/projects.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
-  <ol class="breadcrumb">
+<ol class="breadcrumb">
     <li><a href="{% url 'projects' %}">{% trans 'Projects' %}</a></li>
     <li class="active">{% trans 'Project' %}</li>
-  </ol>
-  
-  <project>
-  <h2><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h2>
-  
-  
-  <div class="info">
+</ol>
+
+<project>
+    <h2><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h2>
+
+
+    <div class="info">
     <span class="date">
       <span class="glyphicon glyphicon-calendar"></span>
       {{ project.create_date }}
     </span>
     <span class="user">
-      <a href="{% url 'profile' project.create_user.username %}"><img src="{{ project.create_user.profile.get_picture }}"></a>
+      <a href="{% url 'profile' project.create_user.username %}"><img
+              src="{{ project.create_user.profile.get_picture }}"></a>
       <a href="{% url 'profile' project.create_user.username %}">{{ project.create_user.profile.get_screen_name }}</a>
     </span>
-    <span class="comments">
+        <span class="comments">
       <span class="glyphicon glyphicon-comment"></span>
       {{ project.get_comments.count }} Comments
     </span>
-    <span class="edit">
+        <span class="edit">
       <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
     </span>
-  </div>
-  </project>
-  
-
-	
-
-
-<div id="exTab3" class="container">	
-<ul  class="nav nav-pills">
-			<li class="active">
-        <a href="#1" data-toggle="tab">Project Abstract</a>
-			</li>
-			<li><a href="#2" data-toggle="tab">Project Description</a>
-			</li>
-			<li><a href="#3" data-toggle="tab">Collaborators</a>
-			</li>
-  		<li><a href="#4" data-toggle="tab">Materials</a>
-			</li>
-			<li><a href="#5" data-toggle="tab">Tags</a>
-			</li>
-		</ul>
-
-			<div class="tab-content clearfix">
-			  <div class="tab-pane active" id="1">
-            <div class="content">
-    {{ project.get_description_as_markdown|safe }}
-	  </div>
-		</div>
-				<div class="tab-pane" id="2">
-          <div class="content">
-    {{ project.get_description_as_markdown|safe }}
-	  </div>
-				</div>
-        <div class="tab-pane" id="3">
-        <ul>
-          {% for each in project.get_collaborators %}
-          <li><span class="user">
-      <a href="{% url 'profile' each.user.username %}"><img src="{{ each.user.profile.get_picture }}"></a>
-      <a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a>
-    </span> </li>
-          {% endfor %}
-         </ul> 
-          
-				</div>
-          <div class="tab-pane" id="4">
-          <ul>
-          {% for each in project.get_materials %}
-          <li> {{each}}</li>
-          {% endfor %}
-         </ul>
-				</div>
-				<div class="tab-pane" id="5">
-          		{% if project.get_tags %}
-    <div class="tags">
-      {% for tag in project.get_tags %}
-        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
-      {% endfor %}
     </div>
-  {% endif %}
-				</div>
-		
-				
-				
-				</div>
-  </div>
+</project>
 
+
+<div id="exTab3" class="container">
+    <div id="details" class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Project Description</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>{{ project.description }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div id="devices">
+                    <h2>Device list</h2>
+                     <div class="table-responsive">
+                      <table class="table">
+                            <tr>
+                                <th>Device Name</th>
+                                <th>Device ID</th>
+                                <th>Location</th>
+                            </tr>
+                            {% for device in project.get_devices %}
+                                <td>{{ device.name }}</td>
+                                <td>{{ device.identification }}</td>
+                                <td>{{ device.location }}</td>
+                            {% endfor %}
+                      </table>
+                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="samples">
+                    <h2>Samples</h2>
+                     <div class="table-responsive">
+                      <table class="table">
+                            <tr>
+                                <th>Sample Name </th>
+                                <th>Sample ID </th>
+                                <th>Materials </th>
+                                <th>Categories</th>
+                            </tr>
+                            {% for each in project.get_materials %}
+                                <td>{{each.sample_name}}</td>
+                                <td>{{each.identification}}</td>
+                                <td>{{each.name}}</td>
+                                <td>{{each.category}}</td>
+                            {% endfor %}
+                      </table>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="collaborators">
+                <h2>Collaborators</h2>
+                 <div class="table-responsive">
+                  <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Institute</th>
+                        </tr>
+                        {% for each in project.get_collaborators %}
+                            <tr>
+                                <td>{{ each.user.profile.get_screen_name }}</td>
+                                <td><div class="led_green"></div></td>
+                            </tr>
+                        {% endfor %}
+                  </table>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if project.get_tags %}
+        <div class="tags">
+            {% for tag in project.get_tags %}
+            <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
 
 
 <!-- Bootstrap core JavaScript
     ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 
-
-  
-  {% include 'projects/partial_project_comments.html' with project=project %}
+{% include 'projects/partial_project_comments.html' with project=project %}
 {% endblock main %}

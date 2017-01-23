@@ -14,12 +14,12 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pharos',
-        'USER': 'root',
-        'PASSWORD': 'cenation1',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'USER': 'pharosuser',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on
+        'PORT': '5432',
     }
 }
 
@@ -40,8 +40,11 @@ INSTALLED_APPS = (
     'floppyforms',
     'bootcamp.activities',
     'bootcamp.projects',
+    'bootcamp.samples',
+    'bootcamp.devices',
     'bootcamp.authentication',
-    'bootcamp.labs',
+    'bootcamp.scanner',
+    #'bootcamp.labs',
     'bootcamp.core',
     'bootcamp.feeds',
     'bootcamp.messenger',

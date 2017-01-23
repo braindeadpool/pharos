@@ -1,11 +1,11 @@
 {% load i18n %}
 <hr>
 <span class="pull-right text-muted" id="comment-helper" style="display: none"><small>{% trans 'Press Ctrl + Enter to post' %}</small></span>
-<h4><span class="comment-count">{{ project.get_comments.count }}</span> {% trans 'Comments' %}</h4>
+<h4><span class="comment-count">{{ sample.get_comments.count }}</span> {% trans 'Comments' %}</h4>
 <div class="post-comment clearfix">
   <form role="form" id="comment-form">
     {% csrf_token %}
-    <input type="hidden" name="project" value="{{ project.pk }}">
+    <input type="hidden" name="sample" value="{{ sample.pk }}">
     <div class="user-portrait clearfix">
       <img src="{{ user.profile.get_picture }}">
     </div>
@@ -15,8 +15,8 @@
   </form>
 </div>
 <div class="well well-sm" id="comment-list">
-  {% for comment in project.get_comments %}
-    {% include 'projects/partial_project_comment.html' with comment=comment %}
+  {% for comment in sample.get_comments %}
+    {% include 'samples/partial_sample_comment.html' with comment=comment %}
   {% empty %}
     <div style="padding: .6em 0">{% trans 'Be the first one to comment!' %}</div>
   {% endfor %}

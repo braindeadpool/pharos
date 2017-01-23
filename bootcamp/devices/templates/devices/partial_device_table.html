@@ -1,0 +1,46 @@
+<tr>
+  <td><a href="{% url 'device' device.slug %}">{{ device.name |truncatewords:10}}</a></td>
+  <div class="info">
+  	
+  	<td><div class="content">
+    {{ device.get_description_as_markdown|safe|truncatewords:10 }}
+  </div></td>
+  
+  <td><div class="content">
+    {{ device.get_collaborators_comma_delimited }}
+  </div></td>
+  <td>
+  {% if device.get_tags %}
+    <div class="tags">
+      {% for tag in device.get_tags %}
+        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+ </td>
+ <td>
+ <span class="user_image">
+      <a href="{% url 'profile' device.create_user.username %}"><img width="40px" border-radius="20px" src="{{ device.create_user.profile.get_picture }}" alt="Profile Image"></a><br/>
+      <a href="{% url 'profile' device.create_user.username %}">{{ device.create_user.profile.get_screen_name }}</a>
+    </span>
+   </td>
+ 
+  
+    <td><span class="date">
+      <span class="glyphicon glyphicon-calendar"></span>
+      {{ device.create_date }}
+    </span></td>
+    
+    <td><span class="comments">
+      <span class="glyphicon glyphicon-comment"></span>
+      {{ device.get_comments.count }} Comments
+    </span></td>
+    <td>
+    <span class="edit">
+      <a href="{% url 'edit_device' device.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+    </span>
+    </td>
+  </div>
+  
+  
+</tr>

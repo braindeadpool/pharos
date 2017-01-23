@@ -1,18 +1,18 @@
 from django import forms
 from django.contrib.auth.models import User
 import floppyforms
-from bootcamp.authentication    .models import Profile
+from bootcamp.authentication.models import Profile
 import bootcamp.core.all_users as all_users
 
-class ProfileForm(forms.ModelForm):
 
+class ProfileForm(forms.ModelForm):
     first_name = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly':'readonly'}),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
         max_length=50,
         label="First Name*",
         required=True)
     last_name = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly':'readonly'}),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
         max_length=50,
         label="Last Name*",
         required=True)
@@ -21,74 +21,82 @@ class ProfileForm(forms.ModelForm):
         required=True,
         label="Email*",
         max_length=75)
-    
+
     role = forms.CharField(
-        widget=forms.Select(attrs={"disabled":'true'},choices = [('User','User') , ('Lab Manager','Lab Manager')]),
+        widget=forms.Select(attrs={"disabled": 'true'}, choices=[('User', 'User'), ('Lab Manager', 'Lab Manager')]),
         required=True,
-        label = "Role*",
+        label="Role*",
         max_length=75)
-    
+
     job_title = forms.CharField(
-        widget=forms.Select(choices = [('Student','Student') , ('Staff','Staff'), ('Professor','Professor'), ('Visitor','Visitor'),('Industry','Industry')]),
+        widget=forms.Select(
+            choices=[('Student', 'Student'), ('Staff', 'Staff'), ('Professor', 'Professor'), ('Visitor', 'Visitor'),
+                     ('Industry', 'Industry')]),
         required=True,
-        label = "Job Title*",
+        label="Job Title*",
         max_length=75)
-    
+
     web_page = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=75,
-        label = "Home Page",
+        label="Home Page",
         required=False)
-    
+
     institution = forms.CharField(
-        widget=floppyforms.widgets.Input(datalist=sorted(set([x.profile.institution for x in User.objects.filter(is_active=True)])) , attrs={'class': 'form-control'}),
+        widget=floppyforms.widgets.Input(
+            #datalist=sorted(set([x.profile.institution for x in User.objects.filter(is_active=True)])),
+            attrs={'class': 'form-control'}),
         max_length=100,
-        label = "Affliated Institution*",
+        label="Affliated Institution*",
         required=True)
 
-#     states = []
-#     countries = []
-#     all_users.update()
-#     all_data = all_users.getUserList()
-#     countries = sorted(set([x.profile.country for x in all_data]))
-#     states = sorted(set([x.profile.state for x in all_data]))
-#     print all_data
-#     print "Countries"
-#     print countries
-#     print "States"
-#     print states
-#    [x.profile.state for x in User.objects.filter(is_active=True).order_by('profile.state')]
-    
+    #     states = []
+    #     countries = []
+    #     all_users.update()
+    #     all_data = all_users.getUserList()
+    #     countries = sorted(set([x.profile.country for x in all_data]))
+    #     states = sorted(set([x.profile.state for x in all_data]))
+    #     print all_data
+    #     print "Countries"
+    #     print countries
+    #     print "States"
+    #     print states
+    #    [x.profile.state for x in User.objects.filter(is_active=True).order_by('profile.state')]
+
     city = forms.CharField(
-        widget=floppyforms.widgets.Input(datalist=sorted(set([x.profile.city for x in User.objects.filter(is_active=True)])) , attrs={'class': 'form-control'}),
+        widget=floppyforms.widgets.Input(
+            #datalist=sorted(set([x.profile.city for x in User.objects.filter(is_active=True)])),
+            attrs={'class': 'form-control'}),
         max_length=75,
-        label = "City*",
+        label="City*",
         required=True)
-    
+
     state = forms.CharField(
-        widget= floppyforms.widgets.Input(datalist=sorted(set([x.profile.state for x in User.objects.filter(is_active=True)])) , attrs={'class': 'form-control'}),
+        widget=floppyforms.widgets.Input(
+            #datalist=sorted(set([x.profile.state for x in User.objects.filter(is_active=True)])),
+            attrs={'class': 'form-control'}),
         max_length=75,
-        label = "State*",
+        label="State*",
         required=True)
-    
+
     country = forms.CharField(
-        widget= floppyforms.widgets.Input(datalist=sorted(set([x.profile.country for x in User.objects.filter(is_active=True)])) , attrs={'class': 'form-control'}),
+        widget=floppyforms.widgets.Input(
+            #datalist=sorted(set([x.profile.country for x in User.objects.filter(is_active=True)])),
+            attrs={'class': 'form-control'}),
         max_length=75,
-        label = "Country*",
+        label="Country*",
         required=True)
-    
+
     bio = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}),
         max_length=200,
-        label = "Tell us about yourself",
+        label="Tell us about yourself",
         required=False)
-
-    
 
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'role', 'job_title',
-                   'web_page', 'institution', 'city', 'state', 'country',  'bio']
+                  'web_page', 'institution', 'city', 'state', 'country', 'bio']
 
 
 class ChangePasswordForm(forms.ModelForm):

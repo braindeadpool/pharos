@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from bootcamp.core.forms import ChangePasswordForm, ProfileForm
 from bootcamp.feeds.models import Feed
-from bootcamp.projects.models import Project,Collaborator
+from bootcamp.projects.models import Project, Collaborator
 from bootcamp.feeds.views import FEEDS_NUM_PAGES, feeds
 from bootcamp.projects.views import PROJECTS_NUM_PAGES
 from bootcamp.authentication.models import LinkedInProfile
@@ -46,7 +46,6 @@ API_SECRET = 'Yht3OP3IrIBMoZKL'
 RETURN_URL = 'http://localhost:8000/add_linkedIn'
 perms = ['r_emailaddress', 'r_basicprofile', 'rw_company_admin']
 
-
 redirect_uri = urllib2.quote('http://localhost:8000/add_linkedIn')
 codeURL = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=78pxbqt7x3s1jx&redirect_uri=http://localhost:8000/signup/&scope=r_basicprofile"
 
@@ -67,9 +66,10 @@ def network(request):
         users = paginator.page(page)
     except PageNotAnInteger:
         users = paginator.page(1)
-    except EmptyPage:   
+    except EmptyPage:
         users = paginator.page(paginator.num_pages)
     return render(request, 'core/network.html', {'users': users})
+
 
 @login_required
 def quickMessage(request):
@@ -80,33 +80,32 @@ def quickMessage(request):
         print "to", to_user_username
         try:
             to_user = User.objects.get(username=to_user_username)
- 
+
         except Exception:
             try:
                 to_user_username = to_user_username[
-                    to_user_username.rfind('(')+1:len(to_user_username)-1]
+                                   to_user_username.rfind('(') + 1:len(to_user_username) - 1]
                 to_user = User.objects.get(username=to_user_username)
- 
+
             except Exception:
                 messages.add_message(request, messages.ERROR,
-                                 'User ' + to_user_username + " could not be found on the system, fatal error. Please contact the Project manager")
+                                     'User ' + to_user_username + " could not be found on the system, fatal error. Please contact the Project manager")
                 return network(request)
- 
+
         message = request.POST.get('message')
         if len(message.strip()) == 0:
             messages.add_message(request, messages.ERROR,
                                  "Cannot send an empty message")
             return network(request)
- 
+
         if from_user != to_user:
             Message.send_message(from_user, to_user, message)
         messages.add_message(request, messages.SUCCESS,
-                                 'Your message has been sent')
+                             'Your message has been sent')
         return network(request)
 
     else:
         return network(request)
-
 
 
 @login_required
@@ -118,20 +117,22 @@ def linkedinRedirection(request):
     at = authentication.get_access_token()
     print at
     application = linkedin.LinkedInApplication(token=at[0])
-    profile =  application.get_profile(selectors=['id', 'first-name', 'siteStandardProfileRequest', 'last-name', 'location', 'distance', 'num-connections', 'skills', 'educations'])
-    print profile 
-#     # Step 3. Lookup the user or create them if they don't exist.
-#     #firstname = profile['firstName']
-#     #lastname = profile['lastName']
-#     identifier = profile['id']
+    profile = application.get_profile(
+        selectors=['id', 'first-name', 'siteStandardProfileRequest', 'last-name', 'location', 'distance',
+                   'num-connections', 'skills', 'educations'])
+    print profile
+    #     # Step 3. Lookup the user or create them if they don't exist.
+    #     #firstname = profile['firstName']
+    #     #lastname = profile['lastName']
+    #     identifier = profile['id']
     print request.user
     page_user = get_object_or_404(User, username=request.user)
     print page_user
-    #user = get_object_or_404(User, username=request.user)
+    # user = get_object_or_404(User, username=request.user)
     identifier = profile['siteStandardProfileRequest']['url']
     print identifier
     LinkedInProfile.objects.get_or_create(identifier=identifier,
-                                                       user=page_user)
+                                          user=page_user)
     page_user.profile.isLinkedinPresent = True
     page_user.profile.linkedin_url = identifier
     page_user.save()
@@ -163,8 +164,8 @@ def profile(request, username):
         'feeds': feeds,
         'from_feed': from_feed,
         'page': 1,
-        'projects':all_projects,
-        })
+        'projects': all_projects,
+    })
 
 
 @login_required
@@ -197,9 +198,8 @@ def settings(request):
             'country': user.profile.country,
             'institution': user.profile.institution,
             'bio': user.profile.bio,
-            })
-        
-         
+        })
+
     return render(request, 'core/settings.html', {'form': form})
 
 
@@ -271,12 +271,12 @@ def save_uploaded_picture(request):
         y = int(request.POST.get('y'))
         w = int(request.POST.get('w'))
         h = int(request.POST.get('h'))
-        tmp_filename = django_settings.MEDIA_ROOT + '/profile_pictures/' +\
-            request.user.username + '_tmp.jpg'
-        filename = django_settings.MEDIA_ROOT + '/profile_pictures/' +\
-            request.user.username + '.jpg'
+        tmp_filename = django_settings.MEDIA_ROOT + '/profile_pictures/' + \
+                       request.user.username + '_tmp.jpg'
+        filename = django_settings.MEDIA_ROOT + '/profile_pictures/' + \
+                   request.user.username + '.jpg'
         im = Image.open(tmp_filename)
-        cropped_im = im.crop((x, y, w+x, h+y))
+        cropped_im = im.crop((x, y, w + x, h + y))
         cropped_im.thumbnail((200, 200), Image.ANTIALIAS)
         cropped_im.save(filename)
         os.remove(tmp_filename)

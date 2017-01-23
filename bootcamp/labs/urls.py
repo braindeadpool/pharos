@@ -1,8 +1,6 @@
-
-
 from django.conf.urls import url
 
-import views
+from bootcamp.labs import views
 
 urlpatterns = [
     url(r'^$', views.labs, name='labs'),

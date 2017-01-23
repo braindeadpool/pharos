@@ -3,16 +3,16 @@
 {% load i18n %}
 
 {% block head %}
-  <script src="{% static 'js/projects.js' %}"></script>
+  <script src="{% static 'js/samples.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
   <ol class="breadcrumb">
-    <li><a href="{% url 'projects' %}">{% trans 'projects' %}</a></li>
+    <li><a href="{% url 'samples' %}">{% trans 'samples' %}</a></li>
     <li><a href="{% url 'drafts' %}">{% trans 'Drafts' %}</a></li>
     <li class="active">{% trans 'Edit' %}</li>
   </ol>
-  <form action="{% url 'edit_project' form.instance.pk %}" method="post" role="form">
+  <form action="{% url 'edit_sample' form.instance.pk %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}

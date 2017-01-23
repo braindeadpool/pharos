@@ -1,0 +1,32 @@
+<device>
+  <h2><a href="{% url 'device' device.slug %}">{{ device.title }}</a></h2>
+  
+  
+  <div class="info">
+    <span class="date">
+      <span class="glyphicon glyphicon-calendar"></span>
+      {{ device.create_date }}
+    </span>
+    <span class="user">
+      <a href="{% url 'profile' device.create_user.username %}"><img src="{{ device.create_user.profile.get_picture }}"></a>
+      <a href="{% url 'profile' device.create_user.username %}">{{ device.create_user.profile.get_screen_name }}</a>
+    </span>
+    <span class="comments">
+      <span class="glyphicon glyphicon-comment"></span>
+      {{ device.get_comments.count }} Comments
+    </span>
+    <span class="edit">
+      <a href="{% url 'edit_device' device.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+    </span>
+  </div>
+  <div class="content">
+    {{ device.get_description_as_markdown|safe }}
+  </div>
+  {% if device.get_tags %}
+    <div class="tags">
+      {% for tag in device.get_tags %}
+        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</device>

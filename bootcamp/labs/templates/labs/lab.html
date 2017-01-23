@@ -2,41 +2,41 @@
 {% load staticfiles %}
 {% load i18n %}
 
-{% block title %}{{ project.title }}{% endblock %}
+{% block title %}{{ lab.title }}{% endblock %}
 
 {% block head %}
-  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
-  <script src="{% static 'js/projects.js' %}"></script>
+  <link href="{% static 'css/labs.css' %}" rel="stylesheet">
+  <script src="{% static 'js/labs.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
   <ol class="breadcrumb">
-    <li><a href="{% url 'projects' %}">{% trans 'Projects' %}</a></li>
-    <li class="active">{% trans 'Project' %}</li>
+    <li><a href="{% url 'labs' %}">{% trans 'labs' %}</a></li>
+    <li class="active">{% trans 'lab' %}</li>
   </ol>
   
-  <project>
-  <h2><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h2>
+  <lab>
+  <h2><a href="{% url 'lab' lab.slug %}">{{ lab.title }}</a></h2>
   
   
   <div class="info">
     <span class="date">
       <span class="glyphicon glyphicon-calendar"></span>
-      {{ project.create_date }}
+      {{ lab.create_date }}
     </span>
     <span class="user">
-      <a href="{% url 'profile' project.create_user.username %}"><img src="{{ project.create_user.profile.get_picture }}"></a>
-      <a href="{% url 'profile' project.create_user.username %}">{{ project.create_user.profile.get_screen_name }}</a>
+      <a href="{% url 'profile' lab.create_user.username %}"><img src="{{ lab.create_user.profile.get_picture }}"></a>
+      <a href="{% url 'profile' lab.create_user.username %}">{{ lab.create_user.profile.get_screen_name }}</a>
     </span>
     <span class="comments">
       <span class="glyphicon glyphicon-comment"></span>
-      {{ project.get_comments.count }} Comments
+      {{ lab.get_comments.count }} Comments
     </span>
     <span class="edit">
-      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+      <a href="{% url 'edit_lab' lab.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
     </span>
   </div>
-  </project>
+  </lab>
   
 
 	
@@ -45,9 +45,9 @@
 <div id="exTab3" class="container">	
 <ul  class="nav nav-pills">
 			<li class="active">
-        <a href="#1" data-toggle="tab">Project Abstract</a>
+        <a href="#1" data-toggle="tab">lab Abstract</a>
 			</li>
-			<li><a href="#2" data-toggle="tab">Project Description</a>
+			<li><a href="#2" data-toggle="tab">lab Description</a>
 			</li>
 			<li><a href="#3" data-toggle="tab">Collaborators</a>
 			</li>
@@ -60,17 +60,17 @@
 			<div class="tab-content clearfix">
 			  <div class="tab-pane active" id="1">
             <div class="content">
-    {{ project.get_description_as_markdown|safe }}
+    {{ lab.get_description_as_markdown|safe }}
 	  </div>
 		</div>
 				<div class="tab-pane" id="2">
           <div class="content">
-    {{ project.get_description_as_markdown|safe }}
+    {{ lab.get_description_as_markdown|safe }}
 	  </div>
 				</div>
         <div class="tab-pane" id="3">
         <ul>
-          {% for each in project.get_collaborators %}
+          {% for each in lab.get_collaborators %}
           <li><span class="user">
       <a href="{% url 'profile' each.user.username %}"><img src="{{ each.user.profile.get_picture }}"></a>
       <a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a>
@@ -81,15 +81,15 @@
 				</div>
           <div class="tab-pane" id="4">
           <ul>
-          {% for each in project.get_materials %}
+          {% for each in lab.get_materials %}
           <li> {{each}}</li>
           {% endfor %}
          </ul>
 				</div>
 				<div class="tab-pane" id="5">
-          		{% if project.get_tags %}
+          		{% if lab.get_tags %}
     <div class="tags">
-      {% for tag in project.get_tags %}
+      {% for tag in lab.get_tags %}
         <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
       {% endfor %}
     </div>
@@ -112,5 +112,5 @@
 
 
   
-  {% include 'projects/partial_project_comments.html' with project=project %}
+  {% include 'labs/partial_lab_comments.html' with lab=lab %}
 {% endblock main %}

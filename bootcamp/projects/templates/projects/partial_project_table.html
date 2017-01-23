@@ -1,9 +1,9 @@
 <tr>
-  <td><a href="{% url 'project' project.slug %}">{{ project.title }}</a></td>
+  <td><a href="{% url 'project' project.slug %}">{{ project.title |truncatewords:10}}</a></td>
   <div class="info">
   	
   	<td><div class="content">
-    {{ project.get_description_as_markdown|safe }}
+    {{ project.get_description_as_markdown|safe|truncatewords:10 }}
   </div></td>
   
   <td><div class="content">

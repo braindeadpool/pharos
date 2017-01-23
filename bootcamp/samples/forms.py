@@ -1,14 +1,14 @@
 from django import forms
 
-from bootcamp.projects.models import Project
+from bootcamp.samples.models import Sample
 from django.contrib.auth.models import User
 import bootcamp.core.all_users as all_users
-from bootcamp.projects.models import Material
+from bootcamp.samples.models import Material
 
 
-class ProjectForm(forms.ModelForm):
-    materials = Material.objects.all()
-    # materials = []
+class SampleForm(forms.ModelForm):
+    # materials = Material.objects.all()
+    materials = []
     category_list = set()
     material_name = set()
     for each in materials:
@@ -37,5 +37,5 @@ class ProjectForm(forms.ModelForm):
                                               choices=users, required=True)
 
     class Meta:
-        model = Project
+        model = Sample
         fields = ['title', 'description', 'tags', 'status', 'collaborators']

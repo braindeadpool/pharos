@@ -8,6 +8,8 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from bootcamp.devices.models import Device
+
 import markdown
 
 #todo add list of team members for a Project
@@ -128,6 +130,7 @@ class Device(models.Model):
     manager = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
     #Device Name
+    device = models.ForeignKey(Device)
     name = models.CharField(max_length=200, null=True, blank=True)
     lab = models.ForeignKey(Lab)
     desciption = models.CharField(max_length=1000, null=True, blank=True) 
