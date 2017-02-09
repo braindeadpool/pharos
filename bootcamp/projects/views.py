@@ -34,6 +34,12 @@ def _projects(request, projects):
 @login_required
 def projects(request):
     all_projects = Project.get_published()
+    for project in all_projects:
+        collaborators = [x.user for x in project.get_collaborators()]
+        if request.user == project.create_user or request.user in collaborators:
+            project.editable = True
+        else:
+            project.editable = False
     return _projects(request, all_projects)
 
 
@@ -48,7 +54,11 @@ def projectsByUser(request):
 def project(request, slug):
     print "reached here"
     project = get_object_or_404(Project, slug=slug, status=Project.PUBLISHED)
-    print "This is the project", project
+    collaborators = [x.user for x in project.get_collaborators()]
+    if request.user == project.create_user or request.user in collaborators:
+        project.editable = True
+    else:
+        project.editable = False
     return render(request, 'projects/project.html', {'project': project})
 
 
@@ -83,9 +93,6 @@ def write(request):
             collaborators = form.cleaned_data.get('collaborators')
             collaborators.append(request.user.username)
             collaborators = set(collaborators)
-
-            print "The collaborators are: "
-            print collaborators
 
             status = form.cleaned_data.get('status')
             if status in [Project.PUBLISHED, Project.DRAFT]:
@@ -144,9 +151,9 @@ def edit(request, id):
     else:
         project = Project(create_user=request.user)
 
-    if request.user.username not in collaborators:
+    if request.user.username not in collaborators and request.user.username != project.create_user.username:
         messages.add_message(request, messages.ERROR,
-                             'You are not authorized to edit this Project- ' + project.title + '. Only collaborators can edit their Project')
+                             'You are not authorized to edit "' + project.title + '". Only collaborators and creator can edit their project')
         return redirect('/projects/')
 
     if request.POST:

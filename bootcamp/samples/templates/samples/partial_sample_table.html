@@ -13,7 +13,7 @@
   {% if sample.get_tags %}
     <div class="tags">
       {% for tag in sample.get_tags %}
-        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+        <a href="{% url 'sample_tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
       {% endfor %}
     </div>
   {% endif %}

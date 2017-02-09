@@ -16,11 +16,18 @@
       {{ project.get_comments.count }} Comments
     </span>
     <span class="edit">
-      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+      {% if project.editable %}
+        <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+      {% endif %}
     </span>
   </div>
   <div class="content">
-    {{ project.get_description_as_markdown|safe }}
+      <div id="inline" href="#project_{{ project.id}}" class="clickable">
+          {{ project.get_description_as_markdown|safe|truncatewords:20 }}
+      </div>
+   <div style="display:none">
+            <div id="project_{{ project.id}}">{{ project.get_description_as_markdown|safe }}</div>
+    </div>
   </div>
   {% if project.get_tags %}
     <div class="tags">

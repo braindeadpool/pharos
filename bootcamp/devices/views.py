@@ -4,14 +4,13 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.conf import settings
 
 from PIL import Image
 
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.devices.forms import DeviceForm
-from bootcamp.devices.models import Device, DeviceComment, Tag, Collaborator, Sample
+from bootcamp.devices.models import Device, DeviceComment, Tag, Collaborator
 from bootcamp.decorators import ajax_required
 
 PROJECTS_NUM_PAGES = 100
@@ -49,6 +48,8 @@ def devicesByUser(request):
 @login_required
 def device(request, slug):
     device = get_object_or_404(Device, slug=slug, status=Device.PUBLISHED)
+    device.picture = device.get_picture()
+    device.pictures = device.get_pictures()
     return render(request, 'devices/device.html', {'device': device})
 
 

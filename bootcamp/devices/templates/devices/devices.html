@@ -41,10 +41,10 @@ $(document).ready(function() {
 
 	
   <div class="page-header">
-    <a href="{% url 'write' %}" class="btn btn-primary pull-right">
+    <a href="{% url 'device_write' %}" class="btn btn-primary pull-right">
       <span class="glyphicon glyphicon-pencil"></span> {% trans 'Add device' %}
     </a>
-    <a href="{% url 'drafts' %}" class="btn btn-default pull-right" style="margin-right: .8em">{% trans 'Drafts' %}</a>
+    <a href="{% url 'device_drafts' %}" class="btn btn-default pull-right" style="margin-right: .8em">{% trans 'Drafts' %}</a>
     <h1>{% trans 'Devices' %}</h1>
   </div>
   <div class="row">
@@ -83,14 +83,14 @@ $(document).ready(function() {
       {% else %}
       
 	    
-          <h4 class="no-data">{% trans 'There is no published device yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
+          <h4 class="no-data">{% trans 'There is no published device yet' %}. <a href="{% url 'device_write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
         {% endif %}
       </section>
     </div>
     <div class="col-md-2 popular-tags">
       <h4>{% trans 'Popular Tags' %}</h4>
       {% for tag, count in popular_tags %}
-        <a href="{% url 'tag' tag %}"><span class="label label-default">{{ count }} {{ tag }}</span></a>
+        <a href="{% url 'device_tag' tag %}"><span class="label label-default">{{ count }} {{ tag }}</span></a>
       {% endfor %}
     </div>
   </div>

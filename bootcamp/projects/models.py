@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from bootcamp.samples import models as samples_models
+from bootcamp.samples.models import Sample, Device
 
 import markdown
 
@@ -31,6 +31,8 @@ class Project(models.Model):
     update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, null=True, blank=True,
                                     related_name="+")
+    devices = models.ManyToManyField(Device, blank=True, null=True)
+    samples = models.ManyToManyField(Sample, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Project")
@@ -84,7 +86,7 @@ class Project(models.Model):
         return Collaborator.objects.filter(project=self)
 
     def get_devices(self):
-        return Device.objects.filter(project=self)
+        return self.devices.all()
 
     def get_materials(self):
         all = Material.objects.filter(project=self)
@@ -97,7 +99,7 @@ class Project(models.Model):
         return to_return
 
     def get_samples(self):
-        all = Sample.objects.filter(project=self)
+        all = self.samples.all()
         to_return = []
         print all
         for each in all:
@@ -200,37 +202,6 @@ class Material(models.Model):
     class Meta:
         verbose_name = _("Material")
         verbose_name_plural = _("Materials")
-        ordering = ("name",)
-
-    def __str__(self):
-        return '{0} - {1}'.format(self.name, self.category)
-
-
-class Device(models.Model):
-    project = models.ForeignKey(Project)
-    identification = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = _("Device")
-        verbose_name_plural = _("Devices")
-        ordering = ("name",)
-
-    def __str__(self):
-        return '{0} - {1}'.format(self.name, self.location)
-
-
-class Sample(models.Model):
-    project = models.ForeignKey(Project)
-    sample = models.ForeignKey(samples_models.Sample)
-    date = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = _("Sample")
-        verbose_name_plural = _("Samples")
         ordering = ("name",)
 
     def __str__(self):

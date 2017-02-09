@@ -7,9 +7,8 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
-from bootcamp.projects.models import Project
-from bootcamp.samples.models import Sample
+from django.conf import settings
+import os
 
 import markdown
 
@@ -68,23 +67,33 @@ class Device(models.Model):
         return devices
 
     def get_picture(self):
-        no_picture = settings.MEDIA_ROOT + '/device_pictures/default.png'
+        no_picture = settings.MEDIA_URL + '/device_pictures/default.png'
         try:
-            filename = settings.MEDIA_ROOT + '/device_pictures/' +\
-                self.name + '.jpg'
-            picture_url = settings.MEDIA_URL + 'device_pictures/' +\
-                self.name + '.jpg'
+            filename = settings.MEDIA_ROOT + '/device_pictures/' + self.identification + '.jpg'
+            picture_url = settings.MEDIA_URL + 'device_pictures/' + self.identification + '.jpg'
             if os.path.isfile(filename):
                 return picture_url
             else:
-                gravatar_url = 'http://www.gravatar.com/avatar/{0}?{1}'.format(
-                    hashlib.md5(self.user.email.lower()).hexdigest(),
-                    urllib.urlencode({'d': no_picture, 's': '256'})
-                    )
-                return gravatar_url
+                return no_picture
 
-        except Exception:
+        except Exception as e:
+            print e
             return no_picture
+
+    def get_pictures(self):
+        no_picture = settings.MEDIA_URL + '/device_pictures/default.png'
+        try:
+            dirname = settings.MEDIA_ROOT + '/device_pictures/' + self.identification +'/'
+            picture_url = settings.MEDIA_URL + 'device_pictures/' + self.identification + '/'
+            if os.path.isdir(dirname):
+                files = os.listdir(dirname)
+                return [[picture_url+x, x.split('.')[0]] for x in files]
+            else:
+                return [[no_picture, 'no_picture']]
+
+        except Exception as e:
+            print e
+            return [no_picture]
 
     def create_tags(self, tags):
         tags = tags.strip()
@@ -107,10 +116,10 @@ class Device(models.Model):
         return Collaborator.objects.filter(device=self)
 
     def get_projects(self):
-        return Project.objects.filter(device=self)
+        return self.project_set.all()
 
     def get_samples(self):
-        all = Sample.objects.filter(device=self)
+        all = self.sample_set.all()
         to_return = []
         print all
         for each in all:

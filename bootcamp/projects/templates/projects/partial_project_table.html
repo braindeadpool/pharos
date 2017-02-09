@@ -37,7 +37,9 @@
     </span></td>
     <td>
     <span class="edit">
-      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% if project.editable %}
+        <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% endif %}
     </span>
     </td>
   </div>

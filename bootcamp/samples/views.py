@@ -8,7 +8,7 @@ from django.contrib import messages
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.samples.forms import SampleForm
-from bootcamp.samples.models import Sample, SampleComment, Tag, Material
+from bootcamp.samples.models import Sample, SampleComment, Tag
 from bootcamp.decorators import ajax_required
 
 PROJECTS_NUM_PAGES = 100
@@ -78,16 +78,6 @@ def add(request):
             sample.save()
             tags = form.cleaned_data.get('tags')
             sample.create_tags(tags)
-
-            # get materials
-            material = request.POST.getlist('material[]')
-            category = request.POST.getlist('category[]')
-            for i in range(len(material)):
-                toInsert = Material()
-                toInsert.name = material[i]
-                toInsert.category = category[i]
-                toInsert.sample = sample
-                toInsert.save()
 
             return redirect('/samples/')
     else:

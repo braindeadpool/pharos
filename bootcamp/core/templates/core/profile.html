@@ -8,9 +8,15 @@
   <link href="{% static 'css/profile.css' %}" rel="stylesheet">
   <link href="{% static 'css/feeds.css' %}" rel="stylesheet">
   <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+  <link href="{% static 'css/jquery.fancybox.css' %}" rel="stylesheet"  />
   <script src="{% static 'js/jquery.bullseye-1.0-min.js' %}"></script>
   <script src="{% static 'js/feeds.js' %}"></script>
   <script src="{% static 'js/projects.js' %}"></script>
+  <!-- Add jQuery library -->
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <!-- Add mousewheel plugin (this is optional) -->
+  <script src="{% static 'jquery.mousewheel.pack.js' %}"></script>
+  <script src="{% static 'js/jquery.fancybox.pack.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
@@ -37,13 +43,12 @@
           {% if page_user.profile.bio %}
           <li><span class="glyphicon glyphicon-file"></span> {{ page_user.profile.get_bio }} </li>
           {% endif %}
-          {% if not page_user.profile.isLinkedinPresent %}
-          <li><span class="glyphicon glyphicon-globe"></span> <a href="{% url 'add_linkedin' page_user.username %}">{{ "Add LinkedIn Profile" }}</a></li>
-          {% endif %}    
-          {% if page_user.profile.isLinkedinPresent %}
-          <br>
-          <li><a href="{{ page_user.profile.get_linkedIn_profile }}" target="_blank"><img src="{% static 'img/LinkedIn-button2.png' %}"></a></li>
-          {% endif %}    
+            <br/>
+          {% for link in page_user.profile.get_links %}
+            <span>
+                <a href="{{ link.url }}" target="_blank"><img style="height:40px;width:auto;" src="{% static 'img/' %}{{link.logo}}" alt="{{ link.name }}"></a>
+            </span>
+          {% endfor %}
         </ul>
       </div>
       <div class="col-md-9">
@@ -56,15 +61,15 @@
             {% include 'feeds/partial_feed.html' with feed=feed %}
           {% endfor %}
         </ul>
-        <div class="col-md-9">
-        <h4>{% trans 'Projects of ' %} {{ page_user.profile.get_screen_name }}</h4>
+        <div class="col-md-9 section">
+        <h2>Projects</h2>
         <section class="projects">
 		    {% for project in projects %}
 	          {% include 'projects/partial_project.html' with project=project %}
 	        {% empty %}
 	          <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
 	        {% endfor %}
-       </section>        
+       </section>
         <div class="load">
           <img src="{% static 'img/loading.gif' %}">
         </div>
@@ -74,6 +79,62 @@
           <input type="hidden" name="page" value="{{ page }}">
         </form>
       </div>
+
+       <!-- Activity Feed -->
+          <div class="col-md-3">
+          <h3>{% trans 'Project Activity Feed' %} </h3>
+        <div class="stream-update">
+          <a href="#"><span class="new-posts"></span> new posts</a>
+        </div>
+        <ul class="stream">
+          {% for feed in project_feeds %}
+            {% include 'feeds/partial_feed.html' with feed=feed %}
+          {% endfor %}
+            <li>Placeholder - 1</li>
+            <li>Placeholder - 2</li>
+            <li>Placeholder - 3</li>
+        </ul>
+      </div>
+
+          <!-- Expert on devices -->
+       <div class="col-md-9">
+        <h3>{% trans 'Expert on devices:' %}</h3>
+           <section class="devices">
+           {% if devices|length != 0 %}
+                <ul>
+                {% for device in devices %}
+                  <li><a href="{% url 'device' device.slug %}">{{ device.name |truncatewords:10}}</a></li>
+                {% endfor %}
+                </ul>
+           {% else %}
+               <h4 class="no-data">{% trans 'This user has no device experience yet' %}.</h4>
+           {% endif %}
+        </section>
+        <div class="load">
+          <img src="{% static 'img/loading.gif' %}">
+        </div>
+        <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
+          <input type="hidden" name="feed_source" id="feed_source" value="{{ page_user.pk }}">
+          <input type="hidden" name="from_feed" value="{{ from_feed }}">
+          <input type="hidden" name="page" value="{{ page }}">
+        </form>
+      </div>
+
     </div>
   </div>
+  <script type="text/javascript">
+      $(document).ready(function() {
+	$(".clickable").fancybox({
+		maxWidth	: 800,
+		maxHeight	: 600,
+		fitToView	: false,
+		width		: '70%',
+		height		: '70%',
+		autoSize	: true,
+		closeClick	: false,
+		openEffect	: 'none',
+		closeEffect	: 'none'
+	});
+});
+  </script>
 {% endblock main %}

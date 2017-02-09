@@ -43,7 +43,7 @@ class ProjectForm(forms.ModelForm):
     print users
 
     collaborators = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
-                                              choices=users, required=True)
+                                              choices=users, required=False)
 
     class Meta:
         model = Project

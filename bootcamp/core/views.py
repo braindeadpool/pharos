@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from bootcamp.core.forms import ChangePasswordForm, ProfileForm
 from bootcamp.feeds.models import Feed
 from bootcamp.projects.models import Project, Collaborator
+from bootcamp.devices.models import Device
 from bootcamp.feeds.views import FEEDS_NUM_PAGES, feeds
 from bootcamp.projects.views import PROJECTS_NUM_PAGES
 from bootcamp.authentication.models import LinkedInProfile
@@ -152,8 +153,17 @@ def profile(request, username):
     page_user = get_object_or_404(User, username=username)
     print type(page_user)
     all_feeds = Feed.get_feeds().filter(user=page_user)
-    all_projects = Collaborator.get_published_by_user(page_user)
-    print all_projects
+    #   all_projects = Collaborator.get_published_by_user(page_user)
+    all_projects = Project.get_published_by_user(page_user)
+    all_devices = Device.get_published_by_user(page_user)
+
+    for project in all_projects:
+        collaborators = [x.user for x in project.get_collaborators()]
+        if request.user == page_user or request.user in collaborators:
+            project.editable = True
+        else:
+            project.editable = False
+
     paginator = Paginator(all_feeds, FEEDS_NUM_PAGES)
     feeds = paginator.page(1)
     from_feed = -1
@@ -165,6 +175,7 @@ def profile(request, username):
         'from_feed': from_feed,
         'page': 1,
         'projects': all_projects,
+        'devices': all_devices
     })
 
 

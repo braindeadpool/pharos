@@ -34,7 +34,9 @@
       {{ project.get_comments.count }} Comments
     </span>
         <span class="edit">
-      <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            {% if project.editable %}
+            <a href="{% url 'edit_project' project.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            {% endif %}
     </span>
     </div>
 </project>
@@ -109,7 +111,7 @@
                         </tr>
                         {% for each in project.get_collaborators %}
                             <tr>
-                                <td>{{ each.user.profile.get_screen_name }}</td>
+                                <td><a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a></td>
                                 <td><div class="led_green"></div></td>
                             </tr>
                         {% endfor %}

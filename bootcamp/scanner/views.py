@@ -19,7 +19,9 @@ def scan_user(request, identification):
     profile = get_object_or_404(Profile, identification=identification)
     page_user = profile.user
     all_feeds = Feed.get_feeds().filter(user=page_user)
-    all_projects = Collaborator.get_published_by_user(page_user)
+    all_projects = Project.get_published_by_user(page_user)
+    print page_user
+    print all_projects
     paginator = Paginator(all_feeds, FEEDS_NUM_PAGES)
     feeds = paginator.page(1)
     from_feed = -1

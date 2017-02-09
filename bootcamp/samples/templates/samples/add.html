@@ -44,9 +44,9 @@
 
 <ol class="breadcrumb">
     <li><a href="{% url 'samples' %}">{% trans 'samples' %}</a></li>
-    <li class="active">{% trans 'Write sample' %}</li>
+    <li class="active">{% trans 'Add sample' %}</li>
 </ol>
-<form action="{% url 'write' %}" method="post" role="form">
+<form action="{% url 'samples_add' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
@@ -65,7 +65,7 @@
     </div>
     {% endfor %}
     <fieldset id="material_information" class="">
-        <legend>Add Materials</legend>
+        <legend>Add Project</legend>
 
         <div class="col-md-12">
             <div id="field">
@@ -73,24 +73,13 @@
 
                     <!-- Text input-->
                     <div class="form-group">
-                        <label class="col-md-3">Material Name*</label>
+                        <label class="col-md-3">Project*</label>
                         <div class="col-md-8">
                             <input type="text" name="material[]" id="material" class="form-control"
                                    list={{form.material_name}}>
                         </div>
                     </div>
                     <br><br>
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-3">Material Category*</label>
-                        <div class="col-md-8">
-                            <input type="text" name="category[]" id="category" class="form-control"
-                                   list={{form.category_list}}>
-                        </div>
-                    </div>
-                    <br><br>
-
                     <hr>
 
 

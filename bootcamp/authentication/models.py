@@ -42,7 +42,10 @@ class Profile(models.Model):
         if self.linkedin_url is None:
             return "#"
         return self.linkedin_url    
-            
+
+    def get_links(self):
+        links = Link.objects.filter(user=self.user)
+        return links
     
     def create_linkedin(self, linkedin_id):
         LinkedInProfile.objects.get_or_create(identifier=linkedin_id,
@@ -166,6 +169,14 @@ class LinkedInProfile(models.Model):
     
     def __str__(self):
         return self.user.username
+
+
+class Link(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=200)
+    url = models.URLField(max_length=200)
+    logo = models.CharField(max_length=200)  # store location of logo file
+
 
 # class Lab(models.Model):
 #     manager = models.ForeignKey(User)

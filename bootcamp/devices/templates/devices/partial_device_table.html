@@ -2,9 +2,13 @@
   <td><a href="{% url 'device' device.slug %}">{{ device.name |truncatewords:10}}</a></td>
   <div class="info">
   	
-  	<td><div class="content">
+  	<td><div id="inline" href="#device_{{ device.id}}" class="clickable">
     {{ device.get_description_as_markdown|safe|truncatewords:10 }}
-  </div></td>
+  </div>
+        <div style="display:none">
+            <div id="device_{{ device.id}}">{{ device.get_description_as_markdown|safe }}</div>
+    </div>
+    </td>
   
   <td><div class="content">
     {{ device.get_collaborators_comma_delimited }}
@@ -13,7 +17,7 @@
   {% if device.get_tags %}
     <div class="tags">
       {% for tag in device.get_tags %}
-        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+        <a href="{% url 'device_tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
       {% endfor %}
     </div>
   {% endif %}

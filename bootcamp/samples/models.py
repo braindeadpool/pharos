@@ -8,6 +8,8 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from bootcamp.devices.models import Device
+
 import markdown
 
 
@@ -30,6 +32,7 @@ class Sample(models.Model):
     update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, null=True, blank=True,
                                     related_name="+")
+    devices = models.ManyToManyField(Device, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Sample")
@@ -62,6 +65,9 @@ class Sample(models.Model):
         samples = Sample.objects.filter(status=Sample.PUBLISHED, create_user=user)
         return samples
 
+    def get_projects(self):
+        return self.project_set.all()
+
     def create_tags(self, tags):
         tags = tags.strip()
         tag_list = tags.split(' ')
@@ -75,17 +81,6 @@ class Sample(models.Model):
 
     def delete_tags(self):
         Tag.objects.filter(sample=self).delete()
-
-    def get_materials(self):
-        print "here"
-        all = Material.objects.filter(sample=self)
-        to_return = []
-        print all
-        for each in all:
-            to_return.append(each)
-        print "the materials are"
-        print to_return
-        return to_return
 
     def get_summary(self):
         if len(self.description) > 255:
@@ -142,18 +137,3 @@ class SampleComment(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.sample.name)
-
-
-class Material(models.Model):
-    sample = models.ForeignKey(Sample)
-    date = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = _("Material")
-        verbose_name_plural = _("Materials")
-        ordering = ("name",)
-
-    def __str__(self):
-        return '{0} - {1}'.format(self.name, self.category)
