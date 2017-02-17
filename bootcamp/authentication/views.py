@@ -10,7 +10,6 @@ def signup(request):
     datalists = {}
     active_users = [x for x in User.objects.filter(is_active=True)]
     datalists['institution'] = sorted(set([x.profile.institution for x in active_users]))
-
     if request.method == 'POST':
         form = SignUpForm(request.POST, datalists=datalists)
         if not form.is_valid():
@@ -86,4 +85,4 @@ def signup(request):
 
     else:
         return render(request, 'authentication/signup.html',
-                      {'form': SignUpForm(datalists=datalists)})
+                      {'form': SignUpForm(datalists=datalists),})

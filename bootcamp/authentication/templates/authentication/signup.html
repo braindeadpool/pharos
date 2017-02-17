@@ -9,6 +9,39 @@
             toggleFields();
             console.log("Hello");
         </script>
+<script type="text/javascript">
+                                    $(document).ready(function() {
+
+
+								//@naresh action dynamic childs
+    var nextedu = 0;
+    $("#add-more").click(function(e){
+        e.preventDefault();
+        var addto = "#field" + nextedu;
+        var addRemove = "#field" + (nextedu);
+        nextedu = nextedu + 1;
+        var newIn = '<div id="field'+ nextedu +'"> <div class="form-group"><div class="col-md-6"><label class="col-md-6">Link name</label><input type="text" name="link-name" class="form-control" list="link-names"></div><div class="col-md-6"><label class="col-md-6">Link url</label><input type="text" name="link-url" class="form-control"></div></div>';
+        var newInput = $(newIn);
+
+        var removeBtn = '<br/><button id="remove' + (nextedu - 1) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
+        var removeButton = $(removeBtn);
+        $(addto).after(newInput);
+        $(addRemove).after(removeButton);
+        $("#field" + nextedu).attr('data-source', $(addto).attr('data-source'));
+        $("#count").val(nextedu);
+
+            $('.remove-me').click(function(e){
+                e.preventDefault();
+                var fieldNum = this.id.charAt(this.id.length-1);
+                var fieldID = "#field" + fieldNum;
+                $(this).remove();
+                $(fieldID).remove();
+            });
+    });
+    });
+
+
+</script>
   
 {% endblock head %}
 
@@ -31,180 +64,58 @@
           {% endfor %}
         </div>
       {% endfor %}
-      <script type="text/javascript">
-                                    $(document).ready(function() {
-                                      toggleFields();
-                                      $("#id_role").change(function () {
-								        toggleFields();
-									    });
-									    
-								//@naresh action dynamic childs
-    var nextedu = 0;
-    $("#add-more").click(function(e){
-        e.preventDefault();
-        var addto = "#field" + nextedu;
-        var addRemove = "#field" + (nextedu);
-        nextedu = nextedu + 1;
-        var newIn = 	'<div id="field'+ nextedu +'">		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Lab/ Group Name*</label>			<div class="col-md-8">				<input class="form-control" id="field_stu" name="field_stu[]" placeholder="e.g. Mined Lab" type="text">			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Device Name*</label>			<div class="col-md-8">				<input class="form-control" id="device_name" name="device_name[]" placeholder="e.g. Electron Microscope" type="text">			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Description*</label>			<div class="col-md-8">				<textarea class="form-control" cols="40" id="description" maxlength="200" name="description[]" rows="10"></textarea>			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Institution</label>			<div class="col-md-8">				<input class="form-control" id="university" list="id_institution_list" name="university[]" placeholder="e.g. Georgia Institute of Technology" type="text">			</div>		</div><!-- Text input-->		<div class="form-group">			<label class="col-md-3">Room/ Building*</label>			<div class="col-md-8">				<textarea class="form-control" cols="40" id="room" maxlength="200" name="room[]" rows="3"></textarea>			</div>		</div><br>		<br>		<br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">City*</label>			<div class="col-md-8">				<input class="form-control" id="city" list="id_city_list" name="city[]" placeholder="e.g. Atlanta" type="text">			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">State*</label>			<div class="col-md-8">				<input class="form-control" id="state" list="id_state_list" name="state[]" placeholder="e.g. Georgia" type="text">			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Country*</label>			<div class="col-md-8">				<input class="form-control" id="country" list="id_country_list" name="country[]" placeholder="e.g. United States of America" type="text">			</div>		</div><br>		<br>		<br>		<br>		<hr>	</div>';
-        var newInput = $(newIn);
-	
-        var removeBtn = '<button id="remove' + (nextedu - 1) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
-        var removeButton = $(removeBtn);
-        $(addto).after(newInput);
-        $(addRemove).after(removeButton);
-        $("#field" + nextedu).attr('data-source',$(addto).attr('data-source'));
-        $("#count").val(nextedu);  
-        
-            $('.remove-me').click(function(e){
-                e.preventDefault();
-                var fieldNum = this.id.charAt(this.id.length-1);
-                var fieldID = "#field" + fieldNum;
-                $(this).remove();
-                $(fieldID).remove();
-            });
-    }); 
-    
-    var nextedu_ = 0;
-    $("#add-more-1").click(function(e){
-        e.preventDefault();
-        var addto = "#field" + nextedu_;
-        var addRemove = "#field" + (nextedu_);
-        nextedu_ = nextedu_ + 1;
-        var newIn = 	'<div id="field'+ nextedu_ +'">		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Device Name*</label>			<div class="col-md-8">				<input class="form-control" id="device_name" name="device_name[]" placeholder="e.g. Electron Microscope" type="text">			</div>		</div><br>		<br>		<!-- Text input-->		<div class="form-group">			<label class="col-md-3">Description*</label>			<div class="col-md-8">				<textarea class="form-control" cols="40" id="description" maxlength="200" name="description[]" rows="10"></textarea>			</div>		</div><br>		<br>		<hr>	</div>';
-        var newInput = $(newIn);
-	
-        var removeBtn = '<button id="remove' + (nextedu_ - 1) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
-        var removeButton = $(removeBtn);
-        $(addto).after(newInput);
-        $(addRemove).after(removeButton);
-        $("#field" + nextedu_).attr('data-source',$(addto).attr('data-source'));
-        $("#count").val(nextedu_);  
-        
-            $('.remove-me').click(function(e){
-                e.preventDefault();
-                var fieldNum = this.id.charAt(this.id.length-1);
-                var fieldID = "#field" + fieldNum;
-                $(this).remove();
-                $(fieldID).remove();
-            });
-    }); 
-    
-									    
-});
-                                    
-                                </script>
-	<div id="parentPermission" style: "display: none">
-      <fieldset id="company_information" class="">
-					<legend>Lab Information</legend>
-			
-              <div class="col-md-12" >
-                <div id="field">
+        <br/>
+      <fieldset id="additional_links" >
+        <legend>Add external profile links</legend>
+
+          <datalist id="link-names">
+                      <option value="linkedin">
+                      <option value="googlescholar">
+                      <option value="github">
+                      <option value="flickr">
+                      <option value="researchgate">
+                      <option value="userdefined"></option>
+                    </datalist>
+        <div class="col-md-12">
+            <div id="field">
                 <div id="field0">
 
-<!-- Text input-->
-<div class="form-group">
-<label class="col-md-3">Lab/ Group Name*</label>
-              <div class="col-md-8">
-            <input type="text"  name="field_stu[]" id="field_stu" class="form-control" placeholder="e.g. Mined Lab"> 
-        </div>      		
-</div>
+                    <!-- Text input-->
+                    <div class="form-group">
 
-<br><br>
-
-<!-- Text input-->
-<div class="form-group">
-<label class="col-md-3">Device Name*</label>
-              <div class="col-md-8">
-            <input type="text"  name="device_name[]" id="device_name" class="form-control" placeholder="e.g. Electron Microscope"> 
-        </div>      		
-</div>
-
-<br><br>
-	
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">Description*</label>
- <div class="col-md-8">
- <textarea class="form-control" cols="40" id="description" maxlength="200" name="description[]" rows="10"></textarea>
-</div>
-</div>
-<br><br>
-
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">Institution*</label>
- <div class="col-md-8">
- <input type="text"  name="university[]" id="university" class="form-control" placeholder="e.g. Georgia Institute of Technology"  list="id_institution_list"> 
-</div>
-</div>
-<br><br>
-
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">Room/ Building*</label>
- <div class="col-md-8">
- <textarea class="form-control" cols="40" id="room" maxlength="200" name="room[]" rows="3"></textarea>
-</div>
-</div>
-<br><br>
-<br>
-<br>
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">City*</label>
- <div class="col-md-8">
- <input type="text"  name="city[]" id="city" class="form-control" placeholder="e.g. Atlanta"  list="id_city_list"> 
-</div>
-</div>
-<br><br>
-
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">State*</label>
- <div class="col-md-8">
- <input type="text"  name="state[]" id="state" class="form-control" placeholder="e.g. Georgia"  list="id_state_list"> 
-</div>
-</div>
-<br><br>
-
-<!-- Text input-->
-<div class="form-group">
- <label class="col-md-3">Country*</label>
- <div class="col-md-8">
- <input type="text"  name="country[]" id="country" class="form-control" placeholder="e.g. United States of America" 
-  list="id_country_list"> 
-</div>
-</div>
-<br><br>
+                        <div class="col-md-6">
+                            <label class="col-md-6">Link name</label>
+                            <input type="text" name="link-name" class="form-control" list="link-names">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-md-6">Link url</label>
+                            <input type="text" name="link-url" class="form-control">
+                        </div>
+                    </div>
 
 
-
-<hr>
-
-
-</div><!--end field0-->
-</div><!--end field-->
-  <!-- Button -->
-<div class="form-group">
-  <div class="col-md-4 col-md-offset-8">
-    <button id="add-more" name="add-more" class="btn btn-primary">Add More</button>
-  </div>
-</div>
-<br><br>      
+                </div><!--end field0-->
+            </div><!--end field-->
+            <!-- Button -->
+            <br><br>
+            <div class="form-group">
+                <div class="col-md-4">
+                    <br>
+                    <button id="add-more" name="add-more" class="btn btn-primary">Add More</button>
+                </div>
             </div>
-            
-            
-                    
-					
-				</fieldset>
-				 				
-				
-      </div>
-    
-    
-    
-      <button type="submit" class="btn btn-primary btn-lg">{% trans 'Create an account' %}</button>
-    </form>
-  </div>
+        </div>
+
+    </fieldset>
+        <br/>
+        <br/>
+        <hr>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg">{% trans 'Create an account' %}</button>
+        </div>
+
+
+</form>
+</div>
 
 {% endblock body %}

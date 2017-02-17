@@ -56,6 +56,19 @@ class Project(models.Model):
         return markdown.markdown(self.description, safe_mode='escape')
 
     @staticmethod
+    def get_popular_authors():
+        projects = Project.objects.all()
+        count = {}
+        for project in projects:
+            if project.status == Project.PUBLISHED:
+                if project.create_user in count:
+                    count[project.create_user] = count[project.create_user] + 1
+                else:
+                    count[project.create_user] = 1
+        sorted_count = sorted(count.items(), key=lambda t: t[1], reverse=True)
+        return sorted_count[:20]
+
+    @staticmethod
     def get_published():
         projects = Project.objects.filter(status=Project.PUBLISHED)
         return projects
@@ -63,6 +76,16 @@ class Project(models.Model):
     @staticmethod
     def get_published_by_user(user):
         projects = Project.objects.filter(status=Project.PUBLISHED, create_user=user)
+        return projects
+
+    @staticmethod
+    def get_collaborated_by_user(user):
+        all_projects = Project.objects.filter(status=Project.PUBLISHED)
+        projects = []
+        for project in all_projects:
+            collaborators = [x.user for x in project.get_collaborators()]
+            if user in collaborators:
+                projects.append(project)
         return projects
 
     def create_tags(self, tags):

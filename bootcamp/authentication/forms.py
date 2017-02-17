@@ -77,13 +77,13 @@ class SignUpForm(forms.ModelForm):
         label="Set Username*",
         help_text='Usernames may contain <strong>alphanumeric</strong>, <strong>_</strong> and <strong>.</strong> characters<br/>You will use this username to login into this portal')  # noqa: E261
 
-    identification = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=50,
-        required=True,
-        label="ID*",
-        help_text="User ID alloted to this user"
-    )
+    # identification = forms.CharField(
+    #     widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #     max_length=50,
+    #     required=True,
+    #     label="ID*",
+    #     help_text="User ID alloted to this user"
+    # )
 
     email = forms.CharField(
         widget=forms.EmailInput(attrs={'class': 'form-control'}),
@@ -115,10 +115,15 @@ class SignUpForm(forms.ModelForm):
         label="Job Title*",
         max_length=75)
 
+    picture = forms.ImageField(
+        required=False,
+        label='Profile Picture',
+    )
+
     web_page = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=75,
-        label="Home Page",
+        label="Home Page / Personal web page",
         required=False)
 
     institution = forms.CharField(
@@ -169,14 +174,14 @@ class SignUpForm(forms.ModelForm):
     bio = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}),
         max_length=200,
-        label="Tell us about yourself",
+        label="Biography",
         required=False)
 
     class Meta:
         model = User
         exclude = ['last_login', 'date_joined']
         fields = ['first_name', 'last_name', 'username', 'email', 'password', 'confirm_password', 'role', 'job_title',
-                  'web_page', 'institution', 'city', 'state', 'country', 'bio']
+                  'picture', 'web_page', 'institution', 'city', 'state', 'country', 'bio']
 
     def __init__(self, *args, **kwargs):
         datalists = kwargs.pop('datalists', None)

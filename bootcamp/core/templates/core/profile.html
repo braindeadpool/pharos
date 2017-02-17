@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load i18n %}
+{% load online_status_tags %}
 
 {% block title %}{{ page_user.profile.get_screen_name }}{% endblock %}
 
@@ -8,6 +9,7 @@
   <link href="{% static 'css/profile.css' %}" rel="stylesheet">
   <link href="{% static 'css/feeds.css' %}" rel="stylesheet">
   <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+  <link href="{% static 'css/chat_window.css' %}" rel="stylesheet">
   <link href="{% static 'css/jquery.fancybox.css' %}" rel="stylesheet"  />
   <script src="{% static 'js/jquery.bullseye-1.0-min.js' %}"></script>
   <script src="{% static 'js/feeds.js' %}"></script>
@@ -17,6 +19,12 @@
   <!-- Add mousewheel plugin (this is optional) -->
   <script src="{% static 'jquery.mousewheel.pack.js' %}"></script>
   <script src="{% static 'js/jquery.fancybox.pack.js' %}"></script>
+  <script type="text/javascript">
+      function hideModal(this){
+      console.log(this);
+        $(this).hide();
+        }
+  </script>
 {% endblock head %}
 
 {% block main %}
@@ -25,7 +33,10 @@
   </div>
   <div class="profile">
     <div class="row">
+
       <div class="col-md-3 user-profile">
+          <div class="row">
+              <div class="col-md-12 user-profile">
         <img src="{{ page_user.profile.get_picture }}" class="picture">
         <ul>
           {% if page_user.profile.job_title %}
@@ -51,6 +62,34 @@
           {% endfor %}
         </ul>
       </div>
+          <div class="row">
+              <div class="col-md-12">
+          <h3>{% trans 'Collaborators' %} </h3>
+        <div class="stream-update">
+          <a href="#"><span class="new-posts"></span> new posts</a>
+        </div>
+        <div>
+            {% if show_chat %}
+            {% for each in collaborators %}
+                {% include 'messenger/chat_window.html' with to_user=each from_user=request.user chat_id=each.id %}
+            {% endfor %}
+            {% else %}
+         <div class="table-responsive">
+          <table class="table">
+            {% for each in collaborators %}
+                <tr>
+                    <td><a href="{% url 'profile' each.username %}">{{ each.profile.get_screen_name }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+         </div>
+            {% endif %}
+        </div>
+      </div>
+      </div>
+              </div>
+        </div>
+
       <div class="col-md-9">
         <h4>{% trans 'Last Feeds by' %} {{ page_user.profile.get_screen_name }}</h4>
         <div class="stream-update">
@@ -122,8 +161,10 @@
 
     </div>
   </div>
+
   <script type="text/javascript">
       $(document).ready(function() {
+
 	$(".clickable").fancybox({
 		maxWidth	: 800,
 		maxHeight	: 600,
@@ -131,10 +172,15 @@
 		width		: '70%',
 		height		: '70%',
 		autoSize	: true,
-		closeClick	: false,
+		closeClick	: true,
+		closeBtn : true,
 		openEffect	: 'none',
-		closeEffect	: 'none'
+		closeEffect	: 'none',
 	});
+	$(".clickable").mouseenter(function(data) {
+	    $(this).trigger('click');
+	});
+
 });
   </script>
 {% endblock main %}

@@ -16,7 +16,7 @@ from bootcamp.activities.models import Notification
 @python_2_unicode_compatible
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    identification = models.CharField(max_length=50)
+    identification = models.CharField(max_length=50, null=True, blank=True)
     role = models.CharField(max_length=50, null=True, blank=True)
     web_page = models.CharField(max_length=50, null=True, blank=True)
     role = models.CharField(max_length=50, null=True, blank=True)

@@ -1,4 +1,5 @@
-{% load staticfiles i18n %}<!DOCTYPE html>
+{% load staticfiles i18n %}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -7,12 +8,14 @@
     <title>{% block title %}Equipment Lab Automation{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootcamp.css' %}?v=1" rel="stylesheet">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="{% static 'js/jquery-ui.js' %}"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="{% static 'js/bootcamp.js' %}"></script>
@@ -39,8 +42,13 @@
                     <span class="glyphicon glyphicon-bell"></span>
                   </a>
                 </li>
-                <li><a href="{% url 'feeds' %}">{% trans 'Feed' %}</a></li>
-                <li><a href="{% url 'projects' %}">{% trans 'Projects' %}</a></li>
+                <li class="dropdown" >
+                  <a href="#" data-toggle="dropdown" class="dropdown-toggle">{% trans 'Projects' %}</a>
+                      <ul class="dropdown-menu">
+                        <li><a href="{% url 'projects' %}">View all projects</a></li>
+                        <li><a href="{% url 'write' %}">Add a project</a></li>
+                      </ul>
+                </li>
                 <li><a href="{% url 'devices' %}">{% trans 'Devices' %}</a></li>
                 <li><a href="{% url 'questions' %}">{% trans 'Q&A' %}</a></li>
                 <li><a href="{% url 'network' %}">{% trans 'My Network' %}</a></li>

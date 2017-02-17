@@ -8,8 +8,40 @@
 
 {% block main %}
 <script type="text/javascript">
-                                    $(document).ready(function() {
-                                      
+var collaborators_id = [];
+var collaborators = {};
+function removeCollaborator(collab) {
+    var ind = collaborators_id.indexOf(collab);
+    collaborators_id.splice(ind, 1);
+    updateCollaboratorsList();
+}
+function updateCollaboratorsList() {
+        $('#collaborators_list').empty();
+        for (key in collaborators_id) {
+            var collab = collaborators[collaborators_id[key]];
+            $('#collaborators_list').append("<h3><span class='label label-primary' id='"+collab.id+"'>"+collab.value+ "</span><button onclick='removeCollaborator("+collab.id+")' type='button' class='close' aria-label='Close'><span aria-hidden='true'>&times;</span></button></h3> ");
+        }
+    }
+$(function() {
+$("#id_add_collaborators").autocomplete({
+    source: "../collaborator_lookup/",
+    minLength: 1,
+    select: function(event, data) {
+        if (collaborators_id.indexOf(data.item.id) == -1) {
+            collaborators_id.push(data.item.id);
+            collaborators[data.item.id] = data.item;
+            console.log(collaborators_id);
+        }
+        updateCollaboratorsList();
+        return data;
+    }
+});
+});
+</script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+
 									    
 								//@naresh action dynamic childs
     var nextedu = 0;
@@ -35,7 +67,8 @@
                 $(this).remove();
                 $(fieldID).remove();
             });
-    }); 
+    });
+
     });
                                     
 
@@ -64,6 +97,13 @@
         {% endfor %}
     </div>
     {% endfor %}
+    <label for="add_collaborators" class="control-label">Add collaborators</label><br>
+    <input id="id_add_collaborators" maxlength="255" name="add_collaborators">
+
+    <div id="collaborators_list"></div>
+    <div class="form-group">
+        {{ form.collaborators }}
+    </div>
     <fieldset id="material_information" class="">
         <legend>Add Materials</legend>
 

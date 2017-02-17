@@ -37,12 +37,11 @@ class ProjectForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=255, required=False,
         help_text='Use spaces to separate the tags, such as "java jsf primefaces"')  # noqa: E501
-    print "printing users in form"
+
     all_users.update()
     users = all_users.getUserTuple()
-    print users
 
-    collaborators = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(),
+    collaborators = forms.MultipleChoiceField(widget=forms.HiddenInput(),
                                               choices=users, required=False)
 
     class Meta:

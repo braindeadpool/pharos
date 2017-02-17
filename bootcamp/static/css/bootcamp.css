@@ -74,3 +74,44 @@ main .container {
 .markdown {
   margin-bottom: .8em;
 }
+
+.gt-logo {
+    width: 20%;
+    height: auto;
+}
+
+
+.online{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    display: inline-block;
+    margin-left: 15%;
+}
+
+.idle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: yellow;
+    display: inline-block;
+    margin-left: 15%;
+}
+
+.offline {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    display: inline-block;
+    margin-left: 15%;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-menu a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}

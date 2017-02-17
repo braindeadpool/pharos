@@ -1,15 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.projects.forms import ProjectForm
 from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Sample
 from bootcamp.decorators import ajax_required
+import simplejson
 
 PROJECTS_NUM_PAGES = 100
 
@@ -24,10 +27,11 @@ def _projects(request, projects):
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
     popular_tags = Tag.get_popular_tags()
-    print projects
+    popular_authors = Project.get_popular_authors()
     return render(request, 'projects/projects.html', {
         'projects': projects,
-        'popular_tags': popular_tags
+        'popular_tags': popular_tags,
+        'popular_authors': popular_authors
     })
 
 
@@ -36,6 +40,7 @@ def projects(request):
     all_projects = Project.get_published()
     for project in all_projects:
         collaborators = [x.user for x in project.get_collaborators()]
+        project.collaborators = collaborators
         if request.user == project.create_user or request.user in collaborators:
             project.editable = True
         else:
@@ -52,7 +57,8 @@ def projectsByUser(request):
 
 @login_required
 def project(request, slug):
-    print "reached here"
+    print
+    "reached here"
     project = get_object_or_404(Project, slug=slug, status=Project.PUBLISHED)
     collaborators = [x.user for x in project.get_collaborators()]
     if request.user == project.create_user or request.user in collaborators:
@@ -72,13 +78,34 @@ def tag(request, tag_name):
     return _projects(request, projects)
 
 
+@login_required
+def author(request, author_name):
+    all_projects = Project.objects.filter(create_user__username=author_name)
+    return _projects(request, all_projects)
+
+
 def persist_collaborators(collaborators, proj):
     # collaborators is a list, for each request we need to persist them
     userMap = all_users.getUserDictionary()
-    print userMap
+    print
+    userMap
     for each in collaborators:
         t, created = Collaborator.objects.get_or_create(project=proj,
                                                         user=userMap[each])
+
+
+def collaborator_lookup(request):
+    # Default return list
+    results = []
+    if request.method == "GET":
+        if request.GET.has_key(u'term'):
+            value = request.GET[u'term']
+            model_results = User.objects.filter(
+                Q(username__icontains=value) | Q(first_name__icontains=value) | Q(last_name__icontains=value))
+            results = [
+                {'id': x.id, 'label': x.first_name + ' ' + x.last_name, 'value': x.first_name + ' ' + x.last_name,
+                 'username': x.username} for x in model_results]
+    return JsonResponse(results, safe=False)
 
 
 @login_required
@@ -125,7 +152,8 @@ def write(request):
 
             return redirect('/projects/')
     else:
-        print "rendering init form"
+        print
+        "rendering init form"
         form = ProjectForm()
     return render(request, 'projects/write.html', {'form': form})
 
@@ -139,7 +167,8 @@ def drafts(request):
 
 @login_required
 def edit(request, id):
-    print "Ok reached here"
+    print
+    "Ok reached here"
     tags = ''
     if id:
         project = get_object_or_404(Project, pk=id)
@@ -147,7 +176,8 @@ def edit(request, id):
             tags = '{0} {1}'.format(tags, tag.tag)
         tags = tags.strip()
         collaborators = [x.user.username for x in project.get_collaborators()]
-        print collaborators
+        print
+        collaborators
     else:
         project = Project(create_user=request.user)
 
@@ -171,8 +201,10 @@ def edit(request, id):
         form = ProjectForm(instance=project)
         form.fields['tags'].initial = tags
         form.fields['collaborators'].initial = collaborators
-        print form.fields['collaborators']
-        print form
+        print
+        form.fields['collaborators']
+        print
+        form
     return render(request, 'projects/edit.html', {'form': form})
 
 
