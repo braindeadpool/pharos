@@ -28,99 +28,103 @@
 {% endblock head %}
 
 {% block main %}
-  <div class="page-header">
-    <h1>{{ page_user.profile.get_screen_name }} {% if page_user.get_full_name %}<small>({{ page_user.username }})</small>{% endif %}</h1>
+
+  <div class="row">
+      <div class="col-md-12">
+          <div class="page-header" style="float: top; position:fixed; margin-bottom:3%">
+            <h1>{{ page_user.profile.get_screen_name }} {% if page_user.get_full_name %}<br/><small>({{ page_user.username }})</small>{% endif %}</h1>
+          </div>
+      </div>
   </div>
   <div class="profile">
     <div class="row">
 
       <div class="col-md-3 user-profile">
-          <div class="row">
+          <div class="row" style="float:left; position:fixed; margin-top:3%;">
               <div class="col-md-12 user-profile">
-        <img src="{{ page_user.profile.get_picture }}" class="picture">
-        <ul>
-          {% if page_user.profile.job_title %}
-          <li><span class="glyphicon glyphicon-briefcase"></span> {{ page_user.profile.job_title }}</li>
-          {% endif %}
-          {% if page_user.email %}
-          <li><span class="glyphicon glyphicon-envelope"></span><a href="mailto:{{ page_user.email }}" target="_top"> {{ page_user.email }} </a> </li>
-          {% endif %}
-          {% if page_user.profile.location %}
-          <li><span class="glyphicon glyphicon-map-marker"></span> {{ page_user.profile.location }}</li>
-          {% endif %}
-          {% if page_user.profile.web_page %}
-          <li><span class="glyphicon glyphicon-globe"></span> <a href="{{ page_user.profile.get_url }}" target="_blank">{{ page_user.profile.get_url }}</a></li>
-          {% endif %}
-          {% if page_user.profile.bio %}
-          <li><span class="glyphicon glyphicon-file"></span> {{ page_user.profile.get_bio }} </li>
-          {% endif %}
-            <br/>
-          {% for link in page_user.profile.get_links %}
-            <span>
-                <a href="{{ link.url }}" target="_blank"><img style="height:40px;width:auto;" src="{% static 'img/' %}{{link.logo}}" alt="{{ link.name }}"></a>
-            </span>
-          {% endfor %}
-        </ul>
-      </div>
-          <div class="row">
-              <div class="col-md-12">
-          <h3>{% trans 'Collaborators' %} </h3>
-        <div class="stream-update">
-          <a href="#"><span class="new-posts"></span> new posts</a>
-        </div>
-        <div>
-            {% if show_chat %}
-            {% for each in collaborators %}
-                {% include 'messenger/chat_window.html' with to_user=each from_user=request.user chat_id=each.id %}
-            {% endfor %}
-            {% else %}
-         <div class="table-responsive">
-          <table class="table">
-            {% for each in collaborators %}
-                <tr>
-                    <td><a href="{% url 'profile' each.username %}">{{ each.profile.get_screen_name }}</td>
-                </tr>
-            {% endfor %}
-          </table>
-         </div>
-            {% endif %}
-        </div>
-      </div>
-      </div>
+                <img src="{{ page_user.profile.get_picture }}" class="picture">
+                <ul>
+                  {% if page_user.profile.job_title %}
+                  <li><span class="glyphicon glyphicon-briefcase"></span> {{ page_user.profile.job_title }}</li>
+                  {% endif %}
+                  {% if page_user.email %}
+                  <li><span class="glyphicon glyphicon-envelope"></span><a href="mailto:{{ page_user.email }}" target="_top"> {{ page_user.email }} </a> </li>
+                  {% endif %}
+                  {% if page_user.profile.location %}
+                  <li><span class="glyphicon glyphicon-map-marker"></span> {{ page_user.profile.location }}</li>
+                  {% endif %}
+                  {% if page_user.profile.web_page %}
+                  <li><span class="glyphicon glyphicon-globe"></span> <a href="{{ page_user.profile.get_url }}" target="_blank">{{ page_user.profile.get_url }}</a></li>
+                  {% endif %}
+                  {% if page_user.profile.bio %}
+                  <li><span class="glyphicon glyphicon-file"></span> {{ page_user.profile.get_bio }} </li>
+                  {% endif %}
+                    <br/>
+                  {% for link in page_user.profile.get_links %}
+                    <span>
+                        <a href="{{ link.url }}" target="_blank"><img class="img-logo" src="{% static 'img/' %}{{link.logo}}" alt="{{ link.name }}"></a>
+                    </span>
+                  {% endfor %}
+                </ul>
               </div>
-        </div>
+              <div class="row">
+                  <div class="col-md-12">
+                    <h3>{% trans 'Collaborators' %} </h3>
+                    <div>
+                        {% if show_chat %}
+                        {% for each in collaborators %}
+                            {% include 'messenger/chat_window.html' with to_user=each from_user=request.user chat_id=each.id %}
+                        {% endfor %}
+                        {% else %}
+                     <div class="table-responsive">
+                      <table class="table">
+                        {% for each in collaborators %}
+                            <tr>
+                                <td><a href="{% url 'profile' each.username %}">{{ each.profile.get_screen_name }}</td>
+                            </tr>
+                        {% endfor %}
+                      </table>
+                     </div>
+                        {% endif %}
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
 
       <div class="col-md-9">
-        <h4>{% trans 'Last Feeds by' %} {{ page_user.profile.get_screen_name }}</h4>
-        <div class="stream-update">
-          <a href="#"><span class="new-posts"></span> new posts</a>
-        </div>
-        <ul class="stream">
-          {% for feed in feeds %}
-            {% include 'feeds/partial_feed.html' with feed=feed %}
-          {% endfor %}
-        </ul>
-        <div class="col-md-9 section">
-        <h2>Projects</h2>
-        <section class="projects">
-		    {% for project in projects %}
-	          {% include 'projects/partial_project.html' with project=project %}
-	        {% empty %}
-	          <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
-	        {% endfor %}
-       </section>
-        <div class="load">
-          <img src="{% static 'img/loading.gif' %}">
-        </div>
-        <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
-          <input type="hidden" name="feed_source" id="feed_source" value="{{ page_user.pk }}">
-          <input type="hidden" name="from_feed" value="{{ from_feed }}">
-          <input type="hidden" name="page" value="{{ page }}">
-        </form>
-      </div>
+          <div class="col-md-12">
+            <h4>{% trans 'Last Feeds by' %} {{ page_user.profile.get_screen_name }}</h4>
+            <div class="stream-update">
+              <a href="#"><span class="new-posts"></span> new posts</a>
+            </div>
+            <ul class="stream">
+              {% for feed in feeds %}
+                {% include 'feeds/partial_feed.html' with feed=feed %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="col-md-9 section">
+            <h2>Projects</h2>
+            <section class="projects">
+                {% for project in projects %}
+                  {% include 'projects/partial_project.html' with project=project %}
+                {% empty %}
+                  <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
+                {% endfor %}
+           </section>
+            <div class="load">
+              <img src="{% static 'img/loading.gif' %}">
+            </div>
+            <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
+              <input type="hidden" name="feed_source" id="feed_source" value="{{ page_user.pk }}">
+              <input type="hidden" name="from_feed" value="{{ from_feed }}">
+              <input type="hidden" name="page" value="{{ page }}">
+            </form>
+          </div>
 
        <!-- Activity Feed -->
-          <div class="col-md-3">
+      <div class="col-md-3" style="position:fixed; float:right; margin-left:35%; margin-top:10%;">
           <h3>{% trans 'Project Activity Feed' %} </h3>
         <div class="stream-update">
           <a href="#"><span class="new-posts"></span> new posts</a>
@@ -138,9 +142,9 @@
           <!-- Expert on devices -->
        <div class="col-md-9">
         <h3>{% trans 'Expert on devices:' %}</h3>
-           <section class="devices">
+           <section>
            {% if devices|length != 0 %}
-                <ul>
+                <ul id="expert_devices">
                 {% for device in devices %}
                   <li><a href="{% url 'device' device.slug %}">{{ device.name |truncatewords:10}}</a></li>
                 {% endfor %}
@@ -160,6 +164,7 @@
       </div>
 
     </div>
+  </div>
   </div>
 
   <script type="text/javascript">

@@ -23,7 +23,7 @@
         var newIn = '<div id="field'+ nextedu +'"> <div class="form-group"><div class="col-md-6"><label class="col-md-6">Link name</label><input type="text" name="link-name" class="form-control" list="link-names"></div><div class="col-md-6"><label class="col-md-6">Link url</label><input type="text" name="link-url" class="form-control"></div></div>';
         var newInput = $(newIn);
 
-        var removeBtn = '<br/><button id="remove' + (nextedu - 1) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
+        var removeBtn = '<br/><button id="remove' + (nextedu) + '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
         var removeButton = $(removeBtn);
         $(addto).after(newInput);
         $(addRemove).after(removeButton);
@@ -33,6 +33,7 @@
             $('.remove-me').click(function(e){
                 e.preventDefault();
                 var fieldNum = this.id.charAt(this.id.length-1);
+                console.log(fieldNum);
                 var fieldID = "#field" + fieldNum;
                 $(this).remove();
                 $(fieldID).remove();
@@ -67,32 +68,23 @@
         <br/>
       <fieldset id="additional_links" >
         <legend>Add external profile links</legend>
-
-          <datalist id="link-names">
-                      <option value="linkedin">
-                      <option value="googlescholar">
-                      <option value="github">
-                      <option value="flickr">
-                      <option value="researchgate">
-                      <option value="userdefined"></option>
-                    </datalist>
         <div class="col-md-12">
+            {% for name, logo in default_links %}
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <img src="{% static 'img/' %}/{{ logo }}" class="img-logo"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="link-url" class="form-control" style="visibility:none;">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
             <div id="field">
                 <div id="field0">
 
                     <!-- Text input-->
-                    <div class="form-group">
-
-                        <div class="col-md-6">
-                            <label class="col-md-6">Link name</label>
-                            <input type="text" name="link-name" class="form-control" list="link-names">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-md-6">Link url</label>
-                            <input type="text" name="link-url" class="form-control">
-                        </div>
-                    </div>
-
 
                 </div><!--end field0-->
             </div><!--end field-->

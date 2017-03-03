@@ -27,7 +27,6 @@ class Device(models.Model):
     slug = models.SlugField(max_length=255, null=True, blank=True)
     description = models.TextField(max_length=4000)
     location = models.CharField(max_length=255)
-    picture = models.ImageField(upload_to='device_pictures/', null=True, blank=True)
     status = models.CharField(max_length=1, choices=STATUS, default=DRAFT)
     create_user = models.ForeignKey(User)
     create_date = models.DateTimeField(auto_now_add=True)
@@ -81,19 +80,12 @@ class Device(models.Model):
             return no_picture
 
     def get_pictures(self):
-        no_picture = settings.MEDIA_URL + '/device_pictures/default.png'
-        try:
-            dirname = settings.MEDIA_ROOT + '/device_pictures/' + self.identification +'/'
-            picture_url = settings.MEDIA_URL + 'device_pictures/' + self.identification + '/'
-            if os.path.isdir(dirname):
-                files = os.listdir(dirname)
-                return [[picture_url+x, x.split('.')[0]] for x in files]
-            else:
-                return [[no_picture, 'no_picture']]
-
-        except Exception as e:
-            print e
-            return [no_picture]
+        pictures = DeviceImage.objects.filter(device=self)
+        print pictures
+        if len(pictures) == 0:
+            return [{'id': 0, 'image': 'device_pictures/default.png'}]
+        else:
+            return pictures
 
     def create_tags(self, tags):
         tags = tags.strip()
@@ -108,6 +100,9 @@ class Device(models.Model):
 
     def delete_tags(self):
         Tag.objects.filter(device=self).delete()
+
+    def delete_pictures(self):
+        DeviceImage.objects.filter(device=self).delete()
 
     def delete_collaborators(self):
         Collaborator.objects.filter(device=self).delete()
@@ -190,6 +185,22 @@ class DeviceComment(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.device.name)
+
+
+@python_2_unicode_compatible
+class DeviceImage(models.Model):
+    image = models.ImageField(upload_to='device_pictures/')
+    device = models.ForeignKey(Device)
+    date = models.DateTimeField(auto_now_add=True)
+    alt_name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Device Image")
+        verbose_name_plural = _("Device Images")
+        ordering = ("date",)
+
+    def __str__(self):
+        return '{}_image_{}'.format(self.device.name, self.id)
 
 
 @python_2_unicode_compatible

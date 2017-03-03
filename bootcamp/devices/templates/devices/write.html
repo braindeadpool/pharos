@@ -46,7 +46,7 @@
     <li><a href="{% url 'devices' %}">{% trans 'devices' %}</a></li>
     <li class="active">{% trans 'Write device' %}</li>
 </ol>
-<form action="{% url 'device_write' %}" method="post" role="form" enctype="multipart/form-data">
+<form action="{% url 'device_write' %}" method="post" role="form"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}

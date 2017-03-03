@@ -45,12 +45,7 @@
     <div id="details" class="container">
         <div class="row">
             <div class="col-md-12">
-                <h2>Device Description</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h3>{{ device.description }}</h3>
+                {{ device.description | safe }}
             </div>
         </div>
     </div>
@@ -69,8 +64,8 @@
                         </tr>
                         {% for each in device.get_collaborators %}
                             <tr>
-                                <td>{{ each.user.profile.get_screen_name }}</td>
-                                <td><div class="led_green"></div></td>
+                                <td><a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a></td>
+                                <td>{{ each.user.profile.institution }}</td>
                             </tr>
                         {% endfor %}
                   </table>
@@ -82,9 +77,9 @@
             <div class="row">
                 <div class="pictures">
                     <h2>Images</h2>
-                    {% for picture, picture_name in device.get_pictures %}
-                        <a href="{{picture}}" data-toggle="lightbox" data-gallery="example-gallery">
-                            <img class="device-picture" id="{{ picture_name }}" src="{{ picture }}" />
+                    {% for picture in device.get_pictures %}
+                        <a href="{{ MEDIA_URL }}{{picture.image}}" data-toggle="lightbox" data-gallery="example-gallery">
+                            <img class="device-picture" id="picture_{{ picture.id }}" src="{{ MEDIA_URL }}{{ picture.image }}" />
                         </a>
                     {% empty %}
                         <span></span>

@@ -10,7 +10,7 @@ from PIL import Image
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.devices.forms import DeviceForm
-from bootcamp.devices.models import Device, DeviceComment, Tag, Collaborator
+from bootcamp.devices.models import Device, DeviceComment, DeviceImage, Tag, Collaborator
 from bootcamp.decorators import ajax_required
 
 PROJECTS_NUM_PAGES = 100
@@ -75,33 +75,14 @@ def persist_collaborators(collaborators, proj):
 @login_required
 def write(request):
     if request.method == 'POST':
-        form = DeviceForm(request.POST)
+        form = DeviceForm(request.POST, request.FILES)
         if form.is_valid():
             device = Device()
             device.create_user = request.user
             device.name = form.cleaned_data.get('name')
             device.description = form.cleaned_data.get('description')
             device.identification = form.cleaned_data.get('identification')
-            device.image = form.cleaned_data.get('picture')
-            print "Image = {}".format(device.image)
-            # save image
-            # if image is not None:
-            #     device_pictures = settings.MEDIA_ROOT + '/device_pictures/'
-            #     if not os.path.exists(device_pictures):
-            #         os.makedirs(device_pictures)
-            #     filename = device_pictures + device.name + +'_'+ device.identification + '.jpg'
-            #     with open(filename, 'wb+') as destination:
-            #         for chunk in image.chunks():
-            #             destination.write(chunk)
-            #     im = Image.open(filename)
-            #     width, height = im.size
-            #     if width > 800:
-            #         new_width = 800
-            #         new_height = (height * 800) / width
-            #         new_size = new_width, new_height
-            #         im.thumbnail(new_size, Image.ANTIALIAS)
-            #         im.save(filename)
-            #     device.image = filename
+            device.images = form.cleaned_data.get('pictures')
 
             collaborators = form.cleaned_data.get('collaborators')
             collaborators.append(request.user.username)
@@ -111,11 +92,15 @@ def write(request):
             if status in [Device.PUBLISHED, Device.DRAFT]:
                 device.status = form.cleaned_data.get('status')
             device.save()
+
+            # save image
+            for each in device.images:
+                image = DeviceImage(image=each, device=device)
+                image.save()
+
             persist_collaborators(collaborators, device)
             tags = form.cleaned_data.get('tags')
             device.create_tags(tags)
-
-
 
             return redirect('/devices/')
     else:
@@ -133,7 +118,6 @@ def drafts(request):
 
 @login_required
 def edit(request, id):
-    print "Ok reached here"
     tags = ''
     if id:
         device = get_object_or_404(Device, pk=id)
@@ -141,7 +125,6 @@ def edit(request, id):
             tags = '{0} {1}'.format(tags, tag.tag)
         tags = tags.strip()
         collaborators = [x.user.username for x in device.get_collaborators()]
-        print collaborators
     else:
         device = Device(create_user=request.user)
 
@@ -151,13 +134,19 @@ def edit(request, id):
         return redirect('/devices/')
 
     if request.POST:
-        form = DeviceForm(request.POST, instance=device)
+        form = DeviceForm(request.POST, request.FILES, instance=device)
         if form.is_valid():
             form.save()
             device.delete_tags()
             device.delete_collaborators()
             collaborators = form.cleaned_data.get('collaborators')
             tags = form.cleaned_data.get('tags')
+            device.images = form.cleaned_data.get('pictures')
+            # save images
+
+            for each in device.images:
+                image = DeviceImage(image=each, device=device)
+                image.save()
             persist_collaborators(collaborators, device)
             device.create_tags(tags)
             return redirect('/devices/')
@@ -165,8 +154,7 @@ def edit(request, id):
         form = DeviceForm(instance=device)
         form.fields['tags'].initial = tags
         form.fields['collaborators'].initial = collaborators
-        print form.fields['collaborators']
-        print form
+
     return render(request, 'devices/edit.html', {'form': form})
 
 

@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^(?P<username>[^/]+)/$', core_views.profile, name='profile'),
     url(r'^(?P<username>[^/]+)/add_linkedin/$', core_views.addLinkedInProfile, name='add_linkedin'),
     url(r'^i18n/', include('django.conf.urls.i18n', namespace='i18n')),
+    url(r'^summernote/', include('django_summernote.urls')),
 
 ]
 

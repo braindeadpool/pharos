@@ -5,94 +5,173 @@
 {% block title %} {% trans 'Projects' %} {% endblock %}
 
 {% block head %}
-	<link rel="shortcut icon" type="image/png" href="/media/images/favicon.png">
-	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://www.datatables.net/rss.xml">
-	<link rel="stylesheet" type="text/css" href="/media/css/site-examples.css?_=b05357026107a2e3ca397f642d976192">
-	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
-	<style type="text/css" class="init">
-	
-	</style>
+<link rel="shortcut icon" type="image/png" href="/media/images/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://www.datatables.net/rss.xml">
+<link rel="stylesheet" type="text/css" href="/media/css/site-examples.css?_=b05357026107a2e3ca397f642d976192">
+<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+<style type="text/css" class="init">
 
-  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
-  <script type="text/javascript" src="/media/js/site.js?_=9a83ad61fa12260d710e54eb5f3203dc">
-	</script>
-	<script type="text/javascript" src="/media/js/dynamic.php?comments-page=examples%2Fstyling%2Fbootstrap.html" async>
-	</script>
-	<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
-	</script>
-	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js">
-	</script>
-	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js">
-	</script>
-	<script type="text/javascript" language="javascript" src="../resources/demo.js">
-	</script>
-	<script type="text/javascript" class="init">
-	
-$(document).ready(function() {
-	$('#example').DataTable();
-} );
+</style>
 
-	</script>
-  
+<link href="{% static 'css/projects.css' %}" rel="stylesheet">
+<script src="{% static 'js/projects.js' %}"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="/media/js/site.js?_=9a83ad61fa12260d710e54eb5f3203dc">
+</script>
+<script type="text/javascript" src="/media/js/dynamic.php?comments-page=examples%2Fstyling%2Fbootstrap.html" async>
+</script>
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
+</script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="../resources/demo.js"></script>
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<script type="text/javascript">
+$(function() {
+    $('input[name="daterange"]').daterangepicker();
+});
+</script>
+<script type="text/javascript" class="init">
+        $(document).ready(function() {
+            var table = $('#projects_table').DataTable({
+            "columns": [
+                { "name": "title_filter", "data": "title" },
+                { "name": "author_filter", "data": "author", "visible": false},
+                { "name": "date_filter", "data": "date", "visible":false },
+                { "name": "tags_filter", "data": "tags", "visible":false },
+            ]
+            });
+
+            $('#table_filters div').each( function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Filter results by '+title+'" />');
+                var this_input = $('input', this);
+                var column_name = this.id;
+                this_input.on('keyup change', function () {
+                    var that = table.column(column_name+':name');
+                    if ( that.search() !== this.value ) {
+                        that.search(this.value).draw();
+                    }
+                });
+            });
+        });
+
+
+</script>
+
 {% endblock head %}
 
 {% block main %}
 
-	
-  <div class="page-header">
+
+<div class="page-header">
     <a href="{% url 'write' %}" class="btn btn-primary pull-right">
-      <span class="glyphicon glyphicon-pencil"></span> {% trans 'Add project' %}
+        <span class="glyphicon glyphicon-pencil"></span> {% trans 'Add project' %}
     </a>
     <a href="{% url 'drafts' %}" class="btn btn-default pull-right" style="margin-right: .8em">{% trans 'Drafts' %}</a>
     <h1>{% trans 'Projects' %}</h1>
-  </div>
-  <div class="row">
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <section class="projects_search" style="display:table; margin-top:1%;">
+            <form action="{% url 'search_projects' %}" method="get" role="form">
+                {% for field in form.visible_fields %}
+                    <div class="form-group{% if field.errors %} has-error{% endif %}" style="display:table-cell; padding:5px;">
+                        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<span class="help-block">{{ field.help_text }}</span>{% endif %}
+                        {% for error in field.errors %}
+                            <label class="control-label">{{ error }}</label>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                {% csrf_token %}
+                {{ form.status }}
+                <div class="form-group" style="display:table-cell; padding:1px;">
+                    <button type="button" class="btn btn-primary publish">{% trans 'Search' %}</button>
+                </div>
+            </form>
+        </section>
+    </div>
     <div class="col-md-10">
-    {% if messages %}
+        {% if messages %}
         {% for message in messages %}
-          <div class="alert alert-danger alert-dismissable">
+        <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             {{ message }}
-          </div>
+        </div>
         {% endfor %}
-      {% endif %}
-      <section class="projects">
-      <br><br>
-      {% if projects|length != 0 %}
-          <div class="projects">
-
-          </div>
-      	<table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <tbody>
-        {% for project in projects %}
-          {% include 'projects/partial_project_table.html' with project=project %}
-        {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      
-	    
-          <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
         {% endif %}
-      </section>
+        <section class="projects">
+            <br><br>
+            {% if projects|length != 0 %}
+            <div class="projects">
+
+            </div>
+            <table id="projects_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead style="display: none;">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Date</th>
+                    <th>Tags</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in projects %}
+                {% include 'projects/partial_project_table.html' with project=project %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+
+
+            <h4 class="no-data">There are no published projects matching your search query!</h4>
+            {% endif %}
+        </section>
+        <section>
+            <table class="test" id="test_table">
+            </table>
+        </section>
     </div>
     <div class="col-md-2 popular-tags">
-      <h4>{% trans 'Popular Tags' %}</h4>
-      {% for tag, count in popular_tags %}
+        {% if projects|length != 0 %}
+        <h4>{% trans 'Popular Tags' %}</h4>
+        {% for tag, count in popular_tags %}
         <a href="{% url 'tag' tag %}"><span class="label label-default">{{ count }} {{ tag }}</span></a>
-      {% endfor %}
+        {% endfor %}
+        <div class="row">
+            <div class="popular-tags">
+                <h4>{% trans 'Popular Authors' %}</h4>
+                {% for author, count in popular_authors %}
+                <a href="{% url 'author' author.username %}"><span class="label label-default"> {{ author.profile.get_screen_name }}</span></a><br/>
+                {% endfor %}
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="filters" id="table_filters">
+                <div class="filter" id="title_filter">Title</div>
+                <br/>
+                <div class="filter" id="author_filter">Author</div>
+                <br/>
+                <div class="filter" id="date_filter">Date</div>
+                <br/>
+                <div class="filter" id="tags_filter">Tags</div>
+                <br/>
+            </div>
+        </div>
+        {% endif %}
     </div>
-     <div class="col-md-2 popular-tags">
-      <h4>{% trans 'Popular Authors' %}</h4>
-      {% for author, count in popular_authors %}
-        <a href="{% url 'author' author.username %}"><span class="label label-default"> {{ author.profile.get_screen_name }}</span></a><br/>
-      {% endfor %}
-    </div>
-  </div>
-  <div class="row">
+</div>
+{% if projects|length != 0 %}
+<div class="row">
     <div class="col-md-12">
-      {% include 'paginator.html' with paginator=projects %}
+        {% include 'paginator.html' with paginator=projects %}
     </div>
-  </div>
+</div>
+{% endif %}
 {% endblock main %}

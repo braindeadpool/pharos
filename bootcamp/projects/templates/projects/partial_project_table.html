@@ -53,4 +53,19 @@
     </div>
   {% endif %}
   </td>
+    <td>
+        <a href="{% url 'profile' project.create_user.username %}"><span style="color: black;">{{ project.create_user.profile.get_screen_name }}</span></a>
+    </td>
+    <td>
+        {{ project.create_date }}
+    </td>
+    <td>
+        {% if project.get_tags %}
+    <div class="tags">
+      {% for tag in project.get_tags %}
+        <a href="{% url 'tag' tag.tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+    </td>
 </tr>

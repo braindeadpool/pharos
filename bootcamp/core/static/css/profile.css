@@ -33,3 +33,21 @@ a:hover{
     background: silver; /* make this whatever you want */
     cursor: pointer;
 }
+
+#expert_devices {
+  display: inline;
+  list-style: none;
+  float:left;
+}
+
+#expert_devices li {
+  display: inline;
+}
+
+#expert_devices li:after {
+  content: ", ";
+}
+
+#expert_devices li:last-child:after {
+    content: "";
+}

@@ -47,3 +47,10 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['title', 'description', 'tags', 'status', 'collaborators']
+
+
+class SearchForm(forms.Form):
+    title = forms.CharField(max_length=255, required=False)
+    author = forms.CharField(max_length=255, required=False)
+    daterange = forms.CharField(label='Dates', required=False)
+    tags = forms.CharField(max_length=255, required=False)

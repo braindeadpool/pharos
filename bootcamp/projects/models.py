@@ -56,8 +56,9 @@ class Project(models.Model):
         return markdown.markdown(self.description, safe_mode='escape')
 
     @staticmethod
-    def get_popular_authors():
-        projects = Project.objects.all()
+    def get_popular_authors(projects = None):
+        if projects is None:
+            projects = Project.objects.all()
         count = {}
         for project in projects:
             if project.status == Project.PUBLISHED:
@@ -166,17 +167,27 @@ class Tag(models.Model):
         return self.tag
 
     @staticmethod
-    def get_popular_tags():
+    def get_popular_tags(projects = None):
         tags = Tag.objects.all()
         count = {}
-        for tag in tags:
-            if tag.project.status == Project.PUBLISHED:
-                if tag.tag in count:
-                    count[tag.tag] = count[tag.tag] + 1
-                else:
-                    count[tag.tag] = 1
-        sorted_count = sorted(count.items(), key=lambda t: t[1], reverse=True)
-        return sorted_count[:20]
+        if projects is None:
+            for tag in tags:
+                if tag.project.status == Project.PUBLISHED:
+                    if tag.tag in count:
+                        count[tag.tag] = count[tag.tag] + 1
+                    else:
+                        count[tag.tag] = 1
+            sorted_count = sorted(count.items(), key=lambda t: t[1], reverse=True)
+            return sorted_count[:20]
+        else:
+            for tag in tags:
+                if tag.project in projects and tag.project.status == Project.PUBLISHED:
+                    if tag.tag in count:
+                        count[tag.tag] = count[tag.tag] + 1
+                    else:
+                        count[tag.tag] = 1
+            sorted_count = sorted(count.items(), key=lambda t: t[1], reverse=True)
+            return sorted_count[:20]
 
 
 @python_2_unicode_compatible

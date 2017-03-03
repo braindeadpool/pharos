@@ -9,7 +9,7 @@ from django.db.models import Q
 
 import bootcamp.core.all_users as all_users
 import markdown
-from bootcamp.projects.forms import ProjectForm
+from bootcamp.projects.forms import ProjectForm, SearchForm
 from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Sample
 from bootcamp.decorators import ajax_required
 import simplejson
@@ -17,7 +17,9 @@ import simplejson
 PROJECTS_NUM_PAGES = 100
 
 
-def _projects(request, projects):
+def _projects(request, projects, form=SearchForm()):
+    popular_authors = Project.get_popular_authors(projects)
+    popular_tags = Tag.get_popular_tags(projects)
     paginator = Paginator(projects, 100)
     page = request.GET.get('page')
     try:
@@ -26,12 +28,11 @@ def _projects(request, projects):
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
-    popular_tags = Tag.get_popular_tags()
-    popular_authors = Project.get_popular_authors()
     return render(request, 'projects/projects.html', {
         'projects': projects,
         'popular_tags': popular_tags,
-        'popular_authors': popular_authors
+        'popular_authors': popular_authors,
+        'form': form
     })
 
 
@@ -46,6 +47,22 @@ def projects(request):
         else:
             project.editable = False
     return _projects(request, all_projects)
+
+
+@login_required
+def search_projects(request):
+    if request.method == "GET" and len(request.GET) > 0:
+        form = SearchForm(request.GET)
+        title = request.GET.get('title', '')
+        author = request.GET.get('author', '')
+        daterange = request.GET.get('daterange', '')
+        tag_values = request.GET.get('tags', '')
+        results = Project.objects.filter(
+            Q(title__icontains=title) & (
+            Q(create_user__first_name__icontains=author) | Q(create_user__last_name__icontains=author)) & Q(tag__tag__icontains=tag_values)).distinct()
+        return _projects(request, results, form)
+    else:
+        return render(request, 'projects/search.html', {'form': SearchForm()})
 
 
 @login_required
@@ -98,8 +115,8 @@ def collaborator_lookup(request):
     # Default return list
     results = []
     if request.method == "GET":
-        if request.GET.has_key(u'term'):
-            value = request.GET[u'term']
+        if 'term' in request.GET.keys():
+            value = request.GET['term']
             model_results = User.objects.filter(
                 Q(username__icontains=value) | Q(first_name__icontains=value) | Q(last_name__icontains=value))
             results = [
@@ -132,23 +149,30 @@ def write(request):
             # get materials and devices
             material = request.POST.getlist('material[]')
             category = request.POST.getlist('category[]')
-            for i in range(len(material)):
-                toInsert = Material()
-                toInsert.name = material[i]
-                toInsert.category = category[i]
-                toInsert.project = project
-                toInsert.save()
+            try:
+                for i in range(len(material)):
+                    toInsert = Material()
+                    toInsert.name = material[i]
+                    toInsert.category = category[i]
+                    toInsert.project = project
+                    toInsert.save()
+            except:
+                print "Inserting of {} failed".format(material)
+                print "Inserting of {} failed".format(category)
 
             device = request.POST.getlist('device[]')
             device_id = request.POST.getlist('device_identification[]')
             device_location = request.POST.getlist('device_location[]')
-            for i in range(len(device)):
-                toInsert = Device()
-                toInsert.name = device[i]
-                toInsert.identification = device_id[i]
-                toInsert.location = device_location[i]
-                toInsert.project = project
-                toInsert.save()
+            try:
+                for i in range(len(device)):
+                    toInsert = Device()
+                    toInsert.name = device[i]
+                    toInsert.identification = device_id[i]
+                    toInsert.location = device_location[i]
+                    toInsert.project = project
+                    toInsert.save()
+            except:
+                print "Inserting of {} failed".format(device)
 
             return redirect('/projects/')
     else:

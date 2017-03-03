@@ -115,3 +115,7 @@ main .container {
 .dropdown:hover .dropdown-menu {
     display: block;
 }
+
+.img-logo {
+    height:40px;width:auto;
+}
