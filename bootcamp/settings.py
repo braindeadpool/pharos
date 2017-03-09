@@ -18,13 +18,14 @@ DATABASES = {
         'NAME': 'pharos',
         'USER': 'pharosuser',
         'PASSWORD': '',
-        'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on
+        'HOST': '127.0.0.1',  # Or an IP Address that your DB is hosted on
         'PORT': '5432',
     }
 }
 
 ALLOWED_HOSTS = ['*']
 
+BASE_URL = "https://127.0.0.1:8000"
 
 # Application definition
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
+    'django.contrib.sites',  # needed for allauth
     'floppyforms',
     'bootcamp.activities',
     'bootcamp.projects',
@@ -44,7 +46,7 @@ INSTALLED_APPS = (
     'bootcamp.devices',
     'bootcamp.authentication',
     'bootcamp.scanner',
-    #'bootcamp.labs',
+    # 'bootcamp.labs',
     'bootcamp.core',
     'bootcamp.feeds',
     'bootcamp.messenger',
@@ -53,7 +55,17 @@ INSTALLED_APPS = (
     'online_status',
     'django_summernote',
     'multiupload',
+    'sslserver',
+    # all auth for dropbox only now
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.dropbox',
+    'allauth.socialaccount.providers.dropbox_oauth2',
+
 )
+
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -90,6 +102,14 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -109,7 +129,7 @@ LANGUAGES = (
     ('es', 'Spanish')
 )
 
-LOCALE_PATHS = (PROJECT_DIR.child('locale'), )
+LOCALE_PATHS = (PROJECT_DIR.child('locale'),)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -135,5 +155,10 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 USERS_ONLINE__TIME_IDLE = 1  # 1 second
 USERS_ONLINE__TIME_OFFLINE = 1  # 1 second
 
-LINKEDIN_TOKEN='78pxbqt7x3s1jx'
-LINKEDIN_SECRET='Yht3OP3IrIBMoZKL'
+LINKEDIN_TOKEN = '78pxbqt7x3s1jx'
+LINKEDIN_SECRET = 'Yht3OP3IrIBMoZKL'
+
+DROPBOX_CONSUMER_KEY = 'wyio74zq5zpqdaw'
+DROPBOX_CONSUMER_SECRET = 'xgh6ba95z9j3jcz'
+DROPBOX_ACCESS_TOKEN = 'xxx'
+DROPBOX_ACCESS_TOKEN_SECRET = 'xxx'

@@ -88,9 +88,9 @@ def signup(request):
             feed = Feed(user=user, post=welcome_post)
             feed.save()
 
-            return redirect('/')
+            return redirect('/connect_repositories/')
 
     else:
         return render(request, 'authentication/signup.html',
                       {'form': SignUpForm(datalists=datalists),
-                       'default_links': default_links})
+                       'default_links': default_links,})

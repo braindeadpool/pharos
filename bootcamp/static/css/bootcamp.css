@@ -117,5 +117,6 @@ main .container {
 }
 
 .img-logo {
-    height:40px;width:auto;
+    width: 200px;
+    height: auto;
 }

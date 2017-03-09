@@ -34,19 +34,19 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
     def get_bio(self):
         return self.bio
-    
+
     def get_linkedIn_profile(self):
         if self.linkedin_url is None:
             return "#"
-        return self.linkedin_url    
+        return self.linkedin_url
 
     def get_links(self):
         links = Link.objects.filter(user=self.user)
         return links
-    
+
     def create_linkedin(self, linkedin_id):
         LinkedInProfile.objects.get_or_create(identifier=linkedin_id,
                                                        user=self)
@@ -166,7 +166,7 @@ class LinkedInProfile(models.Model):
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
     identifier = models.CharField(max_length=200, null=True, blank=True)
-    
+
     def __str__(self):
         return self.user.username
 
@@ -178,32 +178,12 @@ class Link(models.Model):
     logo = models.CharField(max_length=200)  # store location of logo file
 
 
-# class Lab(models.Model):
-#     manager = models.ForeignKey(User)
-#     date = models.DateTimeField(auto_now_add=True)
-#     name = models.CharField(max_length=200, null=True, blank=True)
-#     institution = models.CharField(max_length=200, null=True, blank=True) 
-#     building = models.CharField(max_length=200, null=True, blank=True) 
-#     city = models.CharField(max_length=50, null=True, blank=True)
-#     state = models.CharField(max_length=50, null=True, blank=True)
-#     country = models.CharField(max_length=50, null=True, blank=True)
-#     
-#     def __str__(self):
-#         return self.name
-#     
-# class Device(models.Model):
-#     #Lab Manager ID
-#     manager = models.ForeignKey(User)
-#     date = models.DateTimeField(auto_now_add=True)
-#     #Device Name
-#     name = models.CharField(max_length=200, null=True, blank=True)
-#     lab = models.ForeignKey(Lab)
-#     desciption = models.CharField(max_length=1000, null=True, blank=True) 
-#     requestor = models.CharField(max_length=200, null=True, blank=True)
-#     
-#     def __str__(self):
-#         return self.name + "  " + self.lab.name
-    
+class Repository(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=50)  # should be 'dropbox', 'google_drive', etc
+    access_token = models.CharField(max_length=500)  # access token obtained via Oauth/Oauth2
+    repo_user_id = models.CharField(max_length=200)
+    additional_data = models.CharField(max_length=500, null=True, blank=True)
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

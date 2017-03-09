@@ -17,6 +17,10 @@ urlpatterns = [
         name='login'),
     # url(r'^login/$', linkedin_views.oauth_login, name='login'),
     url(r'^add_linkedIn', core_views.linkedinRedirection, name='linkedin'),
+    url(r'^connect_repositories', core_views.connect_repositories, name='connect_repositories'),
+    url(r'^access_dropbox', core_views.access_dropbox, name='access_dropbox'),
+    url(r'^dropbox_auth_start', core_views.dropbox_auth_start, name='dropbox_auth_start'),
+    url(r'^dropbox_auth_finish', core_views.dropbox_auth_finish, name='dropbox_auth_finish'),
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/$', bootcamp_auth_views.signup, name='signup'),
     url(r'^settings/$', core_views.settings, name='settings'),
@@ -34,7 +38,7 @@ urlpatterns = [
     url(r'^devices/', include('bootcamp.devices.urls')),
     url(r'^scan/', include('bootcamp.scanner.urls')),
     url(r'^samples/', include('bootcamp.samples.urls')),
-    #url(r'^labs/', include('bootcamp.labs.urls')),
+    # url(r'^labs/', include('bootcamp.labs.urls')),
     url(r'^messages/', include('bootcamp.messenger.urls')),
     url(r'^notifications/$', activities_views.notifications,
         name='notifications'),
@@ -47,6 +51,7 @@ urlpatterns = [
     url(r'^(?P<username>[^/]+)/add_linkedin/$', core_views.addLinkedInProfile, name='add_linkedin'),
     url(r'^i18n/', include('django.conf.urls.i18n', namespace='i18n')),
     url(r'^summernote/', include('django_summernote.urls')),
+    url(r'^accounts/', include('allauth.urls')),
 
 ]
 

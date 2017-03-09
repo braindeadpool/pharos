@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %}{{ "Connect Repositories" }}{% endblock %}
+
+{% block main %}
+<fieldset id="external_repository">
+    <legend>Connect cloud repositories</legend>
+    <div class="row">
+        <div class="col-md-12">
+            {% for name, logo, link in default_repos %}
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="{% url link %}" target="_blank"><img src="{% static 'img/' %}/{{ logo }}"
+                                                                  class="img-logo"/></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</fieldset>
+<br/>
+<br/>
+{% endblock main %}
