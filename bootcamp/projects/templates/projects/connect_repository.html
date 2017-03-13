@@ -1,0 +1,39 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<script>
+     function authRepo(name, link) {
+        window.repo_access_token = '';
+        var repoWindow = window.open(link, 'popup','width=600,height=600');
+        // check when popup closes
+        var timer = setInterval(function() {
+        if(repoWindow.closed) {
+            clearInterval(timer);
+            console.log(window.repo_access_token);
+            updateRepo(name);
+        }
+    }, 1000);
+     }
+
+     function updateRepo(name) {
+        // add form and insert hidden input value as access token
+        $('#repo').empty();
+        $('#repo').html('<span class="col-md-3">' + name + ' connected. Enter the project directory url : </span> <fieldset id="repo_information" class=""><input class="col-md-9 form-control" type="text" name="ela_directory" class="form-control"> <input type="hidden" value="' + window.repo_access_token + '" name="access_token" class="form-control"> </fieldset>');
+        $('#repo').append('<span>Leave this field blank to use the root directory as project directory</span>');
+     }
+
+</script>
+<fieldset id="external_repository">
+    <legend>Add repository for project</legend>
+    <div class="row" id="repo">
+        <div class="col-md-12">
+            {% for key, values in repos %}
+            {% for name, logo, link in values %}
+            <div class="clickable col-md-3" onclick="return authRepo('{{name}}', '{% url link %}');"><img src="{% static 'img/' %}/{{ logo }}" class="img-logo"/></div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</fieldset>
+<br/>
+<br/>

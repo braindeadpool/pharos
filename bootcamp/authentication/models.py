@@ -177,13 +177,5 @@ class Link(models.Model):
     url = models.URLField(max_length=200)
     logo = models.CharField(max_length=200)  # store location of logo file
 
-
-class Repository(models.Model):
-    user = models.ForeignKey(User)
-    name = models.CharField(max_length=50)  # should be 'dropbox', 'google_drive', etc
-    access_token = models.CharField(max_length=500)  # access token obtained via Oauth/Oauth2
-    repo_user_id = models.CharField(max_length=200)
-    additional_data = models.CharField(max_length=500, null=True, blank=True)
-
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

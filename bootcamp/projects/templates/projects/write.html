@@ -4,6 +4,7 @@
 
 {% block head %}
 <script src="{% static 'js/projects.js' %}"></script>
+
 {% endblock head %}
 
 {% block main %}
@@ -68,7 +69,6 @@ $(document).ready(function() {
                 $(fieldID).remove();
             });
     });
-
     });
                                     
 
@@ -103,6 +103,10 @@ $(document).ready(function() {
     <div id="collaborators_list"></div>
     <div class="form-group">
         {{ form.collaborators }}
+    </div>
+
+    <div id="repository">
+        {% include 'projects/connect_repository.html' %}
     </div>
     <fieldset id="material_information" class="">
         <legend>Add Materials</legend>

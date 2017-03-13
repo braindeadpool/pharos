@@ -240,3 +240,13 @@ class Material(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.name, self.category)
+
+
+class Repository(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=50)  # should be 'dropbox', 'google_drive', etc
+    access_token = models.CharField(max_length=500)  # access token obtained via Oauth/Oauth2
+    repo_user_id = models.CharField(max_length=200)
+    additional_data = models.CharField(max_length=500, null=True, blank=True)
+    ela_directory = models.CharField(max_length=200, null=True, blank=True)  # where to save ela stuff
+    ela_directory_link = models.CharField(max_length=200, null=True, blank=True)  # given by project creator

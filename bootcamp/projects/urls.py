@@ -4,6 +4,10 @@ from bootcamp.projects import views
 
 urlpatterns = [
     url(r'^$', views.projects, name='projects'),
+    url(r'^connect_repository', views.connect_repository, name='connect_repository'),
+    url(r'^access_repository', views.access_repository, name='access_repository'),
+    url(r'^dropbox_auth_start', views.dropbox_auth_start, name='dropbox_auth_start'),
+    url(r'^dropbox_auth_finish', views.dropbox_auth_finish, name='dropbox_auth_finish'),
     url(r'^search/$', views.search_projects, name='search_projects'),
     url(r'^write/$', views.write, name='write'),
     url(r'^preview/$', views.preview, name='preview'),

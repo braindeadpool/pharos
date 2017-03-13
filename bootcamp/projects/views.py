@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.contrib import messages
@@ -10,9 +10,12 @@ from django.db.models import Q
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.projects.forms import ProjectForm, SearchForm
-from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Sample
+from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Repository
 from bootcamp.decorators import ajax_required
-import simplejson
+
+from bootcamp.settings import DROPBOX_CONSUMER_KEY, DROPBOX_CONSUMER_SECRET, BASE_URL, DEFAULT_REPOS
+from dropbox import DropboxOAuth2Flow
+import dropbox
 
 PROJECTS_NUM_PAGES = 100
 
@@ -59,7 +62,8 @@ def search_projects(request):
         tag_values = request.GET.get('tags', '')
         results = Project.objects.filter(
             Q(title__icontains=title) & (
-            Q(create_user__first_name__icontains=author) | Q(create_user__last_name__icontains=author)) & Q(tag__tag__icontains=tag_values)).distinct()
+                Q(create_user__first_name__icontains=author) | Q(create_user__last_name__icontains=author)) & Q(
+                tag__tag__icontains=tag_values)).distinct()
         return _projects(request, results, form)
     else:
         return render(request, 'projects/search.html', {'form': SearchForm()})
@@ -82,7 +86,15 @@ def project(request, slug):
         project.editable = True
     else:
         project.editable = False
-    return render(request, 'projects/project.html', {'project': project})
+    repository = Repository.objects.filter(project=project)
+    repo = None
+    if len(repository) ==1:
+        repo = repository[0]
+        repo.logo = DEFAULT_REPOS[repository[0].name][1]
+    else:
+        print "Invalid number of repositories found {}".format(repository)
+
+    return render(request, 'projects/project.html', {'project': project, 'repository':repo})
 
 
 @login_required
@@ -157,8 +169,10 @@ def write(request):
                     toInsert.project = project
                     toInsert.save()
             except:
-                print "Inserting of {} failed".format(material)
-                print "Inserting of {} failed".format(category)
+                print
+                "Inserting of {} failed".format(material)
+                print
+                "Inserting of {} failed".format(category)
 
             device = request.POST.getlist('device[]')
             device_id = request.POST.getlist('device_identification[]')
@@ -170,16 +184,55 @@ def write(request):
                     toInsert.identification = device_id[i]
                     toInsert.location = device_location[i]
                     toInsert.project = project
+                    toInsert.create_user = request.user
                     toInsert.save()
             except:
-                print "Inserting of {} failed".format(device)
+                print
+                "Inserting of {} failed".format(device)
+
+            repo = request.session['repo']
+            print repo
+            access_token = request.POST.get('access_token')
+            ela_directory_link = request.POST.get('ela_directory')
+
+            print access_token, ela_directory_link
+
+            # validate the token and the directory link
+            if access_token == repo['access_token']:
+                print "Access token matches - no hijacking!"
+            else:
+                print "Access token mismatch - server has {} while form gave {}".format(repo['access_token'], access_token)
+                raise AssertionError
+
+            dbx = dropbox.Dropbox(access_token)
+            ela_directory = '/'
+            try:
+                metadata = dbx.sharing_get_shared_link_metadata(ela_directory_link)
+                print metadata
+                # add checks to see if its accessible here
+                ela_directory = metadata.path_lower
+            except Exception, e:
+                print e
+                raise
+
+            repoInstance = Repository()
+            repoInstance.access_token = access_token
+            repoInstance.project = project
+            repoInstance.repo_user_id = repo['repo_user_id']
+            repoInstance.additional_data = repo['additional_data']
+            repoInstance.name = repo['name']
+            repo.ela_directory_link = ela_directory_link
+            repoInstance.ela_directory = ela_directory
+            repoInstance.save()
+
+            print "repository link saved for this project"
 
             return redirect('/projects/')
     else:
         print
         "rendering init form"
         form = ProjectForm()
-    return render(request, 'projects/write.html', {'form': form})
+    return render(request, 'projects/write.html', {'form': form, 'repos': DEFAULT_REPOS})
 
 
 @login_required
@@ -276,3 +329,107 @@ def comment(request):
 
     except Exception:
         return HttpResponseBadRequest()
+
+
+### -------- REPOSITORIES ------------- ###
+
+
+@login_required
+def connect_repository(request):
+    return render(request, 'projects/connect_repository.html',
+                  {'repos': DEFAULT_REPOS})
+
+
+@login_required
+def access_repository(request, repo=None):
+    if repo is None:
+        repo = Repository.objects.get(user=request.user)
+    account_linked = repo is not None
+    if account_linked:
+        # setup client
+        # dbx = dropbox.Dropbox(repo.access_token)
+        ela_directory = '/'  # defaults to root directory
+        # check for ela directory
+        try:
+            if repo.ela_directory is not None:
+                ela_directory = repo.ela_directory
+        except:
+            pass
+
+        # tree_view = list_folder(dbx, ela_directory, recursive=True)
+        # print tree_view
+        # tree_view = json.dumps(tree_view)
+        return render(request, 'projects/dropbox.html', {
+            'account_linked': account_linked,
+            'repo': repo,
+            'ela_directory': ela_directory,
+            # 'tree_view': tree_view
+        })
+    else:
+        return render(request, 'projects/dropbox.html', {'account_linked': account_linked})
+
+
+def get_dropbox_auth_flow(web_app_session):
+    redirect_uri = BASE_URL + "/projects/dropbox_auth_finish"
+    return DropboxOAuth2Flow(DROPBOX_CONSUMER_KEY, DROPBOX_CONSUMER_SECRET, redirect_uri, web_app_session,
+                             "dropbox-auth-csrf-token")
+
+
+# URL handler for /dropbox-auth-start
+def dropbox_auth_start(request):
+    # repo = None
+    # try:
+    #     repo = Repository.objects.filter(project=project)
+    # except Repository.DoesNotExist:
+    #     repo = None
+    # account_linked = repo is not None
+    # if account_linked:
+    #     return access_dropbox(request, repo)
+    authorize_url = get_dropbox_auth_flow(request.session).start()
+    print
+    "authorize URL = {}".format(authorize_url)
+    return HttpResponseRedirect(authorize_url)
+
+
+# URL handler for /dropbox-auth-finish
+def dropbox_auth_finish(request):
+    try:
+        try:
+            if request.session["dropbox-auth-csrf-token"] is None or request.session["dropbox-auth-csrf-token"] == "":
+                raise Exception("Problem with csrf")
+        except Exception, e:
+            # Get it from the parameter and add it to the session.
+            csrf = request.GET.get("state")
+            request.session["dropbox-auth-csrf-token"] = csrf
+        oauth_result = get_dropbox_auth_flow(request.session).finish(request.GET)
+        print
+        oauth_result
+        access_token = "None"
+        user_id = "None"
+        url_state = "None"
+        account_id = "None"
+        additional_data = "None, None"
+        try:
+            access_token = oauth_result.access_token
+            user_id = oauth_result.user_id
+            url_state = oauth_result.url_state
+            account_id = oauth_result.account_id
+            additional_data = "{}, {}".format(account_id + url_state)
+        except Exception, e:
+            print
+            e
+
+        dropbox_repo = {}
+        dropbox_repo['name'] = 'dropbox'
+        dropbox_repo['project'] = None
+        dropbox_repo['access_token'] = access_token
+        dropbox_repo['repo_user_id'] = user_id
+        dropbox_repo['additional_data'] = additional_data
+        request.session['repo'] = dropbox_repo
+        print "Dropbox info saved in session as {}".format(dropbox_repo)
+
+    except Exception, e:
+        raise e
+    return render(request, 'projects/repo_connected.html',
+                  {'repos': DEFAULT_REPOS,
+                   'repo': dropbox_repo})

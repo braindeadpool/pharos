@@ -56,13 +56,13 @@ INSTALLED_APPS = (
     'django_summernote',
     'multiupload',
     'sslserver',
+    'filebrowser',
     # all auth for dropbox only now
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     # 'allauth.socialaccount.providers.dropbox',
     'allauth.socialaccount.providers.dropbox_oauth2',
-
 )
 
 SITE_ID = 1
@@ -158,7 +158,14 @@ USERS_ONLINE__TIME_OFFLINE = 1  # 1 second
 LINKEDIN_TOKEN = '78pxbqt7x3s1jx'
 LINKEDIN_SECRET = 'Yht3OP3IrIBMoZKL'
 
+# REPOSITORY SETTINGS
+DEFAULT_REPOS = {'dropbox': ['Dropbox', 'dropbox-logo.png', 'dropbox_auth_start'],
+                 'google-drive': ['Google Drive', 'google-drive-logo.png', 'dropbox_auth_start']}
+
 DROPBOX_CONSUMER_KEY = 'wyio74zq5zpqdaw'
 DROPBOX_CONSUMER_SECRET = 'xgh6ba95z9j3jcz'
 DROPBOX_ACCESS_TOKEN = 'xxx'
 DROPBOX_ACCESS_TOKEN_SECRET = 'xxx'
+
+# django-filebrowser
+FILEBROWSER_DIRECTORY = 'media/'

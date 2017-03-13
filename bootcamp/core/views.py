@@ -1,10 +1,6 @@
-import os
-
 from django.conf import settings as django_settings
-from django.contrib import messages
+
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -13,35 +9,24 @@ from bootcamp.feeds.models import Feed
 from bootcamp.projects.models import Project, Collaborator
 from bootcamp.devices.models import Device
 from bootcamp.feeds.views import FEEDS_NUM_PAGES, feeds
-from bootcamp.projects.views import PROJECTS_NUM_PAGES
 from bootcamp.authentication.models import LinkedInProfile
 from bootcamp.messenger.models import Message
 from django.contrib import messages
 from PIL import Image
-import webbrowser
 
 import oauth2 as oauth
-import cgi
-import simplejson as json
 import urllib2
 
 from linkedin import linkedin
 
-from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from __builtin__ import True
 
-from bootcamp.settings import DROPBOX_CONSUMER_KEY, DROPBOX_CONSUMER_SECRET, BASE_URL
-from bootcamp.authentication.models import Repository
 import webbrowser
-import dropbox
-from dropbox import DropboxOAuth2Flow
 import os
-import sys
 
 consumer = oauth.Consumer(settings.LINKEDIN_TOKEN, settings.LINKEDIN_SECRET)
 client = oauth.Client(consumer)
@@ -325,86 +310,3 @@ def save_uploaded_picture(request):
         pass
 
     return redirect('/settings/picture/')
-
-
-### -------- REPOSITORIES ------------- ###
-default_repos = [['Dropbox', 'dropbox-logo.png', 'dropbox_auth_start'],
-                 ['Google Drive', 'google-drive-logo.png', 'dropbox_auth_start']]
-
-
-@login_required
-def connect_repositories(request):
-    return render(request, 'core/connect_repositories.html',
-                  {'default_repos': default_repos})
-
-
-@login_required
-def access_dropbox(request, repo=None):
-    if repo is None:
-        repo = Repository.objects.get(user=request.user)
-    account_linked = repo is not None
-    if account_linked:
-        pass
-    return render(request, 'core/dropbox.html', {'account_linked': account_linked}
-                  )
-
-
-def get_dropbox_auth_flow(web_app_session):
-    redirect_uri = BASE_URL + "/dropbox_auth_finish"
-    return DropboxOAuth2Flow(DROPBOX_CONSUMER_KEY, DROPBOX_CONSUMER_SECRET, redirect_uri, web_app_session,
-                             "dropbox-auth-csrf-token")
-
-
-# URL handler for /dropbox-auth-start
-def dropbox_auth_start(request):
-    repo = Repository.objects.get(user=request.user)
-    account_linked = repo is not None
-    if account_linked:
-        return access_dropbox(request, repo)
-    authorize_url = get_dropbox_auth_flow(request.session).start()
-    print
-    "authorize URL = {}".format(authorize_url)
-    return HttpResponseRedirect(authorize_url)
-
-
-# URL handler for /dropbox-auth-finish
-def dropbox_auth_finish(request):
-    try:
-        try:
-            if request.session["dropbox-auth-csrf-token"] is None or request.session["dropbox-auth-csrf-token"] == "":
-                raise Exception("Problem with csrf")
-        except Exception, e:
-            # Get it from the parameter and add it to the session.
-            csrf = request.GET.get("state")
-            request.session["dropbox-auth-csrf-token"] = csrf
-        oauth_result = get_dropbox_auth_flow(request.session).finish(request.GET)
-        print
-        oauth_result
-        access_token = "None"
-        user_id = "None"
-        url_state = "None"
-        account_id = "None"
-        additional_data = "None, None"
-        try:
-            access_token = oauth_result.access_token
-            user_id = oauth_result.user_id
-            url_state = oauth_result.url_state
-            account_id = oauth_result.account_id
-            additional_data = "{}, {}".format(account_id + url_state)
-        except Exception, e:
-            print
-            e
-
-        print
-        access_token, user_id, additional_data
-        dropbox_repo = Repository()
-        dropbox_repo.name = 'dropbox'
-        dropbox_repo.user = request.user
-        dropbox_repo.access_token = access_token
-        dropbox_repo.repo_user_id = user_id
-        dropbox_repo.additional_data = additional_data
-        dropbox_repo.save()
-
-    except Exception, e:
-        raise e
-    return HttpResponseRedirect('/')

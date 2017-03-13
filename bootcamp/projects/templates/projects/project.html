@@ -25,7 +25,7 @@
       <span class="glyphicon glyphicon-calendar"></span>
       {{ project.create_date }}
     </span>
-    <span class="user">
+        <span class="user">
       <a href="{% url 'profile' project.create_user.username %}"><img
               src="{{ project.create_user.profile.get_picture }}"></a>
       <a href="{% url 'profile' project.create_user.username %}">{{ project.create_user.profile.get_screen_name }}</a>
@@ -67,62 +67,74 @@
             <div class="row">
                 <div id="devices">
                     <h2>Device list</h2>
-                     <div class="table-responsive">
-                      <table class="table table-striped table-bordered">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
                             <tr>
                                 <th>Device Name</th>
                                 <th>Device ID</th>
                                 <th>Location</th>
                             </tr>
                             {% for device in project.get_devices %}
-                                <td>{{ device.name }}</td>
-                                <td>{{ device.identification }}</td>
-                                <td>{{ device.location }}</td>
+                            <td>{{ device.name }}</td>
+                            <td>{{ device.identification }}</td>
+                            <td>{{ device.location }}</td>
                             {% endfor %}
-                      </table>
-                     </div>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div class="row">
                 <div id="samples">
                     <h2>Samples</h2>
-                     <div class="table-responsive">
-                      <table class="table table-striped table-bordered">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
                             <tr>
-                                <th>Sample Name </th>
-                                <th>Sample ID </th>
-                                <th>Materials </th>
+                                <th>Sample Name</th>
+                                <th>Sample ID</th>
+                                <th>Materials</th>
                                 <th>Categories</th>
                             </tr>
                             {% for each in project.get_materials %}
-                                <td>{{each.sample_name}}</td>
-                                <td>{{each.identification}}</td>
-                                <td>{{each.name}}</td>
-                                <td>{{each.category}}</td>
+                            <td>{{each.sample_name}}</td>
+                            <td>{{each.identification}}</td>
+                            <td>{{each.name}}</td>
+                            <td>{{each.category}}</td>
                             {% endfor %}
-                      </table>
-                     </div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="repository">
+                    <h2>Repository</h2>
+                    {% if repository.ela_directory_link %}
+                    <a href="{{ repository.ela_directory_link }}" target="_blank">
+                        {% else %}
+                        <a href="www.{{ repository.name }}.com">
+                        {% endif %}
+                        <img src="{% static 'img/' %}/{{ repository.logo }}" class="img-logo"/>
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div id="collaborators">
                 <h2>Collaborators</h2>
-                 <div class="table-responsive">
-                  <table class="table table-striped table-bordered">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
                         <tr>
                             <th>Name</th>
                             <th>Institute</th>
                         </tr>
                         {% for each in project.get_collaborators %}
-                            <tr>
-                                <td><a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a></td>
-                                <td>{{each.user.profile.institution}}</td>
-                            </tr>
+                        <tr>
+                            <td><a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a></td>
+                            <td>{{each.user.profile.institution}}</td>
+                        </tr>
                         {% endfor %}
-                  </table>
-                 </div>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

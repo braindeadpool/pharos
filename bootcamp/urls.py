@@ -9,18 +9,17 @@ from bootcamp.core import views as core_views
 from bootcamp.search import views as search_views
 
 from django.contrib import admin
+from filebrowser.sites import site
+
 
 urlpatterns = [
+    url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^$', core_views.home, name='home'),
     url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
         name='login'),
     # url(r'^login/$', linkedin_views.oauth_login, name='login'),
     url(r'^add_linkedIn', core_views.linkedinRedirection, name='linkedin'),
-    url(r'^connect_repositories', core_views.connect_repositories, name='connect_repositories'),
-    url(r'^access_dropbox', core_views.access_dropbox, name='access_dropbox'),
-    url(r'^dropbox_auth_start', core_views.dropbox_auth_start, name='dropbox_auth_start'),
-    url(r'^dropbox_auth_finish', core_views.dropbox_auth_finish, name='dropbox_auth_finish'),
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/$', bootcamp_auth_views.signup, name='signup'),
     url(r'^settings/$', core_views.settings, name='settings'),

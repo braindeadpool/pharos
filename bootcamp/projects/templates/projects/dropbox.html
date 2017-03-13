@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %}{{ "Access Dropbox" }}{% endblock %}
+
+{% block head %}
+<link href="{% static 'css/file-tree.min.css' %}" rel="stylesheet">
+<!-- Add jQuery library -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="{% static 'js/file-tree.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Dropbox-sdk.min.js' %}"></script>
+<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs"
+        data-app-key="wyio74zq5zpqdaw"></script>
+{% if account_linked %}
+<script type="text/javascript">
+$(document).ready(function() {
+    initializeDropbox();
+    listFiles(window.dbx);
+    createChooser();
+    var data = [{
+        id: 'dir-1',
+        name: 'Root',
+        type: 'dir',
+        children: [{
+            id: 'dir-2',
+            name: 'Sub_dir',
+            type: 'dir',
+            children: [{
+                id: 'file-1',
+                name: 'file-tree-master.zip',
+                type: 'zip',
+                url: '1.zip'
+            }]
+        }, {
+            id: 'file-2',
+            name: 'File tree',
+            type: 'zip',
+            url: '2.zip'
+        }]
+    }];
+
+    $('#demo').fileTree({
+        data: data,
+        sortable: false,
+        selectable: false
+    });
+
+});
+
+
+
+</script>
+
+<script type="text/javascript">
+    function initializeDropbox() {
+    var ACCESS_TOKEN = '{{ repo.access_token }}';
+    window.dbx = new Dropbox({ accessToken: ACCESS_TOKEN });
+        var usage = window.dbx.usersGetSpaceUsage().then(function(response) {
+            console.log(response);
+            $('#usage-warning').append("<strong>Note!</strong> You have used " +(response.used*100/response.allocation.allocated).toFixed(2) + "% of your Dropbox space");
+        }).catch(function(error) {
+            console.log(error);
+        });
+
+    }
+
+    function listFiles(dbx=null) {
+    if (dbx == null) {
+         dbx = window.dbx;
+         }
+      dbx.filesListFolder({path: ''})
+        .then(function(response) {
+          displayFiles(response.entries);
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      return false;
+    }
+
+    function displayFiles(files) {
+      var filesList = document.getElementById('files');
+      var li;
+      for (var i = 0; i < files.length; i++) {
+        li = document.createElement('li');
+        li.appendChild(document.createTextNode(files[i].name));
+        filesList.appendChild(li);
+      }
+    }
+
+    function uploadFile(dbx=null) {
+      if (dbx == null) {
+         dbx = window.dbx;
+         }
+      var fileInput = document.getElementById('file-upload');
+      var file = fileInput.files[0];
+      dbx.filesUpload({path: '/' + file.name, contents: file})
+        .then(function(response) {
+          var results = $('#results');
+          results.html('File uploaded!');
+          console.log(response);
+          results.show();
+          window.setTimeout(function() {
+              results.fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove();
+              });
+            }, 3000);
+          $('#files').empty();
+          listFiles();
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      return false;
+    }
+
+    function createChooser() {
+
+        var options = {
+            // Required. Called when a user selects an item in the Chooser.
+            success: function(files) {
+                var results = $('#chooser_results');
+                results.empty();
+                var choose_str = "<h3>Selected file links:</h3><span>";
+                for (var i = 0; i < files.length; i++) {
+                    choose_str += "<p><a target='_blank' href='" + files[i].link + "'>" + files[i].name + "</a></p>";
+                }
+                results.html(choose_str);
+                results.show();
+            },
+            // Optional. Called when the user closes the dialog without selecting a file
+            // and does not include any parameters.
+            cancel: function() {
+
+            },
+
+            // linkType: "preview",
+            linkType: "direct",
+
+            multiselect: true,
+        };
+        var button = Dropbox.createChooseButton(options);
+        document.getElementById("chooser").appendChild(button);
+    }
+
+
+
+</script>
+{% endif %}
+{% endblock head %}
+
+
+{% block main %}
+
+{% if account_linked %}
+
+<div class="alert alert-warning" id="main-warnings">
+    {% if ela_directory == '/' %}
+    <strong>Warning!</strong> You are currently using the root directory as dropbox directory. If you wish to change
+    this to a different directory, click <a href="#">here</a>
+    {% endif %}
+</div>
+<div class="alert alert-info" id="usage-warning">
+</div>
+<div style="display:none;" class="alert alert-success" id="results"></div>
+
+
+<div class="row">
+    <label>Your Dropbox directory</label>
+    <div id="demo"></div>
+    <div class="directory">
+        <ul id="files">
+        </ul>
+    </div>
+</div>
+<br/>
+<div class="row">
+    <div class="file-upload col-md-12">
+        <label>Upload file to your Dropbox</label>
+        <form onSubmit="return uploadFile();">
+            <input type="file" id="file-upload"/>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+<br/>
+<label>Get downloadable file link(s) from your Dropbox</label>
+<div class="file-download" id="chooser">
+</div>
+<div id="chooser_results">
+
+</div>
+{% else %}
+<h1>Your account is not connected to dropbox. Go to {% url 'connect_repositories' %} and connect your Dropbox
+    account.</h1>
+{% endif %}
+
+
+{% endblock main %}

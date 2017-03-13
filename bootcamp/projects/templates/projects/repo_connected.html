@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %}{{ repo.name  }}{% endblock %}
+
+{% block head %}
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="{% static 'js/Dropbox-sdk.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dropbox_utils.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        var access_token = '{{ repo.access_token }}';
+        opener.window.repo_access_token = access_token;
+        console.log(access_token);
+        setTimeout(function() { window.close();}, 5000);
+    });
+</script>
+{% endblock head %}
+
+
+{% block main %}
+<p>{{ repo.name }} has been successfully connected to this project. This window will automatically close in 5 seconds.</p>
+{% endblock main %}
