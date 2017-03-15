@@ -78,8 +78,6 @@ def projectsByUser(request):
 
 @login_required
 def project(request, slug):
-    print
-    "reached here"
     project = get_object_or_404(Project, slug=slug, status=Project.PUBLISHED)
     collaborators = [x.user for x in project.get_collaborators()]
     if request.user == project.create_user or request.user in collaborators:
@@ -88,9 +86,10 @@ def project(request, slug):
         project.editable = False
     repository = Repository.objects.filter(project=project)
     repo = None
-    if len(repository) ==1:
+    if len(repository) == 1:
         repo = repository[0]
         repo.logo = DEFAULT_REPOS[repository[0].name][1]
+        print repo
     else:
         print "Invalid number of repositories found {}".format(repository)
 
@@ -221,7 +220,7 @@ def write(request):
             repoInstance.repo_user_id = repo['repo_user_id']
             repoInstance.additional_data = repo['additional_data']
             repoInstance.name = repo['name']
-            repo.ela_directory_link = ela_directory_link
+            repoInstance.ela_directory_link = ela_directory_link
             repoInstance.ela_directory = ela_directory
             repoInstance.save()
 

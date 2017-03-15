@@ -27,10 +27,8 @@
     <legend>Add repository for project</legend>
     <div class="row" id="repo">
         <div class="col-md-12">
-            {% for key, values in repos %}
-            {% for name, logo, link in values %}
+            {% for name, logo, link in repos.itervalues %}
             <div class="clickable col-md-3" onclick="return authRepo('{{name}}', '{% url link %}');"><img src="{% static 'img/' %}/{{ logo }}" class="img-logo"/></div>
-            {% endfor %}
             {% endfor %}
         </div>
     </div>
