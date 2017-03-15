@@ -88,7 +88,7 @@ def signup(request):
             feed = Feed(user=user, post=welcome_post)
             feed.save()
 
-            return redirect('/connect_repositories/')
+            return redirect('/profile')
 
     else:
         return render(request, 'authentication/signup.html',
