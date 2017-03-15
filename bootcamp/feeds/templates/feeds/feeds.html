@@ -51,9 +51,9 @@
               {% include 'feeds/partial_feed.html' with feed=feed %}
             {% endfor %}
           </ul>
-          <div class="load">
-            <img src="{% static 'img/loading.gif' %}">
-          </div>
+          <!--<div class="load">-->
+            <!--<img src="{% static 'img/loading.gif' %}">-->
+          <!--</div>-->
           <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
             <input type="hidden" name="feed_source" id="feed_source" value="all">
             <input type="hidden" name="from_feed" value="{{ from_feed }}">

@@ -113,9 +113,9 @@
                   <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
                 {% endfor %}
            </section>
-            <div class="load">
-              <img src="{% static 'img/loading.gif' %}">
-            </div>
+            <!--<div class="load">-->
+              <!--<img src="{% static 'img/loading.gif' %}">-->
+            <!--</div>-->
             <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
               <input type="hidden" name="feed_source" id="feed_source" value="{{ page_user.pk }}">
               <input type="hidden" name="from_feed" value="{{ from_feed }}">
@@ -153,9 +153,9 @@
                <h4 class="no-data">{% trans 'This user has no device experience yet' %}.</h4>
            {% endif %}
         </section>
-        <div class="load">
-          <img src="{% static 'img/loading.gif' %}">
-        </div>
+        <!--<div class="load">-->
+          <!--<img src="{% static 'img/loading.gif' %}">-->
+        <!--</div>-->
         <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
           <input type="hidden" name="feed_source" id="feed_source" value="{{ page_user.pk }}">
           <input type="hidden" name="from_feed" value="{{ from_feed }}">
