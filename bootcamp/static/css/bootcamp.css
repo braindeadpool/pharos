@@ -121,6 +121,11 @@ main .container {
     height: auto;
 }
 
+.img2-logo {
+    width: 25%;
+    height: auto;
+}
+
 .clickable:hover{
     cursor: pointer;
 }

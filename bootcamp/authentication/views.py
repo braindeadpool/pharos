@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.conf import settings
+import os
+from PIL import Image
 
 from bootcamp.authentication.forms import SignUpForm
 from bootcamp.feeds.models import Feed
@@ -51,6 +54,26 @@ def signup(request):
             user.profile.web_page = web_page
             user.profile.bio = bio
             user.profile.city = city
+
+            # add picture
+
+            profile_pictures = settings.MEDIA_ROOT + '/profile_pictures/'
+            if not os.path.exists(profile_pictures):
+                os.makedirs(profile_pictures)
+            f = request.FILES['picture']
+            filename = profile_pictures + username + '.jpg'
+            with open(filename, 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+            im = Image.open(filename)
+            width, height = im.size
+            if width > 350:
+                new_width = 350
+                new_height = (height * 350) / width
+                new_size = new_width, new_height
+                im.thumbnail(new_size, Image.ANTIALIAS)
+                im.save(filename)
+
             user.save()
             #             if role == 'Lab Manager':
             #                 names =  request.POST.getlist('field_stu[]')

@@ -50,7 +50,7 @@
   <h1 class="logo"><a href="{% url 'home' %}">Equipment Lab Automation</a></h1>
   <div class="signup">
     <h2>{% trans 'Sign up' %}</h2>
-    <form action="{% url 'signup' %}" method="post" role="form">
+    <form action="{% url 'signup' %}" method="post" role="form" enctype="multipart/form-data">
       {% csrf_token %}
       {% for field in form.visible_fields %}
         <div class="form-group{% if field.errors %} has-error{% endif %}">
@@ -73,7 +73,7 @@
                     <div class="row">
                         <div class="form-group">
                             <div class="col-md-3">
-                                <img src="{% static 'img/' %}/{{ logo }}" class="img-logo"/>
+                                <img src="{% static 'img/' %}/{{ logo }}" class="img2-logo"/>
                             </div>
                             <div class="col-md-6">
                                 <input type="text" name="link-url" class="form-control" style="visibility:none;">
