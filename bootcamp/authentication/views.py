@@ -56,23 +56,24 @@ def signup(request):
             user.profile.city = city
 
             # add picture
+            if 'picture' in request.FILES:
+                profile_pictures = settings.MEDIA_ROOT + '/profile_pictures/'
+                if not os.path.exists(profile_pictures):
+                    os.makedirs(profile_pictures)
 
-            profile_pictures = settings.MEDIA_ROOT + '/profile_pictures/'
-            if not os.path.exists(profile_pictures):
-                os.makedirs(profile_pictures)
-            f = request.FILES['picture']
-            filename = profile_pictures + username + '.jpg'
-            with open(filename, 'wb+') as destination:
-                for chunk in f.chunks():
-                    destination.write(chunk)
-            im = Image.open(filename)
-            width, height = im.size
-            if width > 350:
-                new_width = 350
-                new_height = (height * 350) / width
-                new_size = new_width, new_height
-                im.thumbnail(new_size, Image.ANTIALIAS)
-                im.save(filename)
+                f = request.FILES['picture']
+                filename = profile_pictures + username + '.jpg'
+                with open(filename, 'wb+') as destination:
+                    for chunk in f.chunks():
+                        destination.write(chunk)
+                im = Image.open(filename)
+                width, height = im.size
+                if width > 350:
+                    new_width = 350
+                    new_height = (height * 350) / width
+                    new_size = new_width, new_height
+                    im.thumbnail(new_size, Image.ANTIALIAS)
+                    im.save(filename)
 
             user.save()
             #             if role == 'Lab Manager':
