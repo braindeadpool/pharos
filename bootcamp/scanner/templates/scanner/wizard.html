@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load online_status_tags %}
+
+{% block title %}Scanner Wizard{% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/scanner.css' %}" rel="stylesheet">
+  <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+  <script src="{% static 'js/projects.js' %}"></script>
+  <!-- Add jQuery library -->
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <!-- Add mousewheel plugin (this is optional) -->
+  <script src="{% static 'jquery.mousewheel.pack.js' %}"></script>
+  <script src="{% static 'js/jquery.fancybox.pack.js' %}"></script>
+  <script type="text/javascript">
+      function hideModal(this){
+      console.log(this);
+        $(this).hide();
+        }
+  </script>
+{% endblock head %}
+
+{% block main %}
+
+  <div class="row">
+      <div class="col-md-12">
+          <div class="page-header" style="float: top; position:fixed; margin-bottom:3%">
+          </div>
+      </div>
+  </div>
+  <div class="profile">
+    <div class="row">
+
+      <div class="col-md-9">
+          <div class="col-md-12">
+            <h1>Scanner wizard</h1>
+              <div class="stepwizard">
+    <div class="stepwizard-row">
+        <div class="stepwizard-step">
+            <button type="button" class="btn btn-danger btn-circle">1</button>
+            <br/>
+            <span class="stepwizard-text stepwizard-current">Scan user</span>
+        </div>
+        <div class="stepwizard-step">
+            <button type="button" class="btn btn-primary btn-circle" disabled="disabled">2</button>
+            <br/>
+            <span class="stepwizard-text">Select Project</span>
+        </div>
+        <div class="stepwizard-step">
+            <button type="button" class="btn btn-success btn-circle" disabled="disabled">3</button>
+            <br/>
+            <span class="stepwizard-text">Collect samples</span>
+        </div>
+    </div>
+</div>
+
+    </div>
+  </div>
+  </div>
+
+  <script type="text/javascript">
+      $(document).ready(function() {
+
+	$(".clickable").fancybox({
+		maxWidth	: 800,
+		maxHeight	: 600,
+		fitToView	: false,
+		width		: '70%',
+		height		: '70%',
+		autoSize	: true,
+		closeClick	: true,
+		closeBtn : true,
+		openEffect	: 'none',
+		closeEffect	: 'none',
+	});
+	$(".clickable").mouseenter(function(data) {
+	    $(this).trigger('click');
+	});
+
+});
+  </script>
+{% endblock main %}
