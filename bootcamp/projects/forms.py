@@ -3,17 +3,16 @@ from django import forms
 from bootcamp.projects.models import Project
 from django.contrib.auth.models import User
 import bootcamp.core.all_users as all_users
-from bootcamp.projects.models import Material, Device, Sample
+from bootcamp.projects.models import Material
+from bootcamp.devices.models import Device
 
 
 class ProjectForm(forms.ModelForm):
     materials = Material.objects.all()
     devices = Device.objects.all()
-    # samples = Sample.objects.all()
 
     # materials = []
     devices = []
-    samples = []
     category_list = set()
     material_name = set()
     device_name = set()

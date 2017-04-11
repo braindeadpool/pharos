@@ -177,5 +177,14 @@ class Link(models.Model):
     url = models.URLField(max_length=200)
     logo = models.CharField(max_length=200)  # store location of logo file
 
+
+class Institution(models.Model):
+    grid_id = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=500)
+    wikipedia_url = models.URLField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    established = models.CharField(max_length=5, default='2017')
+
+
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

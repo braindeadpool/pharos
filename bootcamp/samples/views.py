@@ -8,7 +8,8 @@ from django.contrib import messages
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.samples.forms import SampleForm
-from bootcamp.samples.models import Sample, SampleComment, Tag
+from bootcamp.samples.models import Sample, SampleComment, SampleTag
+from bootcamp.projects.models import Project
 from bootcamp.decorators import ajax_required
 
 PROJECTS_NUM_PAGES = 100
@@ -23,7 +24,7 @@ def _samples(request, samples):
         samples = paginator.page(1)
     except EmptyPage:
         samples = paginator.page(paginator.num_pages)
-    popular_tags = Tag.get_popular_tags()
+    popular_tags = SampleTag.get_popular_tags()
     print samples
     return render(request, 'samples/samples.html', {
         'samples': samples,
@@ -54,7 +55,7 @@ def sample(request, slug):
 
 @login_required
 def tag(request, tag_name):
-    tags = Tag.objects.filter(tag=tag_name)
+    tags = SampleTag.objects.filter(tag=tag_name)
     samples = []
     for tag in tags:
         if tag.sample.status == Sample.PUBLISHED:
@@ -65,12 +66,14 @@ def tag(request, tag_name):
 @login_required
 def add(request):
     if request.method == 'POST':
-        form = SampleForm(request.POST)
+        form = SampleForm(request.POST, user=request.user)
         if form.is_valid():
             sample = Sample()
             sample.create_user = request.user
-            sample.title = form.cleaned_data.get('title')
+            sample.name = form.cleaned_data.get('name')
             sample.description = form.cleaned_data.get('description')
+            sample.identification = form.cleaned_data.get('identification')
+            sample.project = form.cleaned_data.get('project')
 
             status = form.cleaned_data.get('status')
             if status in [Sample.PUBLISHED, Sample.DRAFT]:
@@ -82,7 +85,7 @@ def add(request):
             return redirect('/samples/')
     else:
         print "rendering init form"
-        form = SampleForm()
+        form = SampleForm(user=request.user)
     return render(request, 'samples/add.html', {'form': form})
 
 

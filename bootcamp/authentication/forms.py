@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 import floppyforms
 
 from bootcamp.settings import ALLOWED_SIGNUP_DOMAINS
-from .models import Profile
+from .models import Profile, Institution
 import bootcamp.core.all_users as all_users
 
 
@@ -126,9 +126,13 @@ class SignUpForm(forms.ModelForm):
         label="Home Page / Personal web page",
         required=False)
 
+    institution_list = [x.profile.institution for x in User.objects.filter(is_active=True)]
+    for x in Institution.objects.all():
+        institution_list.append(x.name)
+
     institution = forms.CharField(
         widget=floppyforms.widgets.Input(
-            datalist=sorted(set([x.profile.institution for x in User.objects.filter(is_active=True)])),
+            datalist=sorted(set(institution_list)),
             attrs={'class': 'form-control'}),
         max_length=100,
         label="Affliated Institution*",

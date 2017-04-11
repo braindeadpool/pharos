@@ -8,8 +8,6 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from bootcamp.samples.models import Sample, Device
-
 import markdown
 
 
@@ -31,8 +29,6 @@ class Project(models.Model):
     update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, null=True, blank=True,
                                     related_name="+")
-    devices = models.ManyToManyField(Device, blank=True, null=True)
-    samples = models.ManyToManyField(Sample, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Project")
@@ -109,9 +105,6 @@ class Project(models.Model):
     def get_collaborators(self):
         return Collaborator.objects.filter(project=self)
 
-    def get_devices(self):
-        return self.devices.all()
-
     def get_materials(self):
         all = Material.objects.filter(project=self)
         to_return = []
@@ -121,16 +114,16 @@ class Project(models.Model):
         print "the materials are"
         print to_return
         return to_return
-
-    def get_samples(self):
-        all = self.samples.all()
-        to_return = []
-        print all
-        for each in all:
-            to_return.append(each)
-        print "the samples are"
-        print to_return
-        return to_return
+    #
+    # def get_samples(self):
+    #     all = self.samples.all()
+    #     to_return = []
+    #     print all
+    #     for each in all:
+    #         to_return.append(each)
+    #     print "the samples are"
+    #     print to_return
+    #     return to_return
 
     def get_collaborators_comma_delimited(self):
         all = Collaborator.objects.filter(project=self)

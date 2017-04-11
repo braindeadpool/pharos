@@ -9,6 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from bootcamp.devices.models import Device
+from bootcamp.projects.models import Project
 
 import markdown
 
@@ -32,6 +33,7 @@ class Sample(models.Model):
     update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, null=True, blank=True,
                                     related_name="+")
+    project = models.ForeignKey(Project)
     devices = models.ManyToManyField(Device, blank=True, null=True)
 
     class Meta:
@@ -65,22 +67,22 @@ class Sample(models.Model):
         samples = Sample.objects.filter(status=Sample.PUBLISHED, create_user=user)
         return samples
 
-    def get_projects(self):
-        return self.project_set.all()
+    def get_project(self):
+        return self.project
 
     def create_tags(self, tags):
         tags = tags.strip()
         tag_list = tags.split(' ')
         for tag in tag_list:
             if tag:
-                t, created = Tag.objects.get_or_create(tag=tag.lower(),
-                                                       sample=self)
+                t, created = SampleTag.objects.get_or_create(tag=tag.lower(),
+                                                             sample=self)
 
     def get_tags(self):
-        return Tag.objects.filter(sample=self)
+        return SampleTag.objects.filter(sample=self)
 
     def delete_tags(self):
-        Tag.objects.filter(sample=self).delete()
+        SampleTag.objects.filter(sample=self).delete()
 
     def get_summary(self):
         if len(self.description) > 255:
@@ -96,7 +98,7 @@ class Sample(models.Model):
 
 
 @python_2_unicode_compatible
-class Tag(models.Model):
+class SampleTag(models.Model):
     tag = models.CharField(max_length=50)
     sample = models.ForeignKey(Sample)
 
@@ -111,7 +113,7 @@ class Tag(models.Model):
 
     @staticmethod
     def get_popular_tags():
-        tags = Tag.objects.all()
+        tags = SampleTag.objects.all()
         count = {}
         for tag in tags:
             if tag.sample.status == Sample.PUBLISHED:

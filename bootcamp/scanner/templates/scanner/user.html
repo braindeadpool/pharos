@@ -93,9 +93,9 @@
             <section class="projects">
                 <ul>
                 {% for project in projects %}
-                  <li><h3><a href="{% url 'scan_project' identification=identification project_name=project.slug %}">{{ project.title }}</a></h3></li>
+                  <li><h3><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h3></li>
                 {% empty %}
-                  <h4 class="no-data">{% trans 'There is no published project yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
+                  <h4 class="no-data">{% trans 'This user has no published project yet!' %}.</h4>
                 {% endfor %}
                 </ul>
            </section>

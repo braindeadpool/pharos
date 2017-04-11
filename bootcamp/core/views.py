@@ -46,7 +46,7 @@ codeURL = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&cl
 
 def home(request):
     if request.user.is_authenticated():
-        return feeds(request)
+        return redirect('/{}'.format(request.user))
     else:
         return render(request, 'core/cover.html')
 

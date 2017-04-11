@@ -1,5 +1,5 @@
 <tr>
-  <td><a href="{% url 'sample' sample.slug %}">{{ sample.title }}</a></td>
+  <td><a href="{% url 'sample' sample.slug %}">{{ sample.name }}</a></td>
   <div class="info">
   	
   	<td><div class="content">
@@ -7,7 +7,7 @@
   </div></td>
   
   <td><div class="content">
-    {{ sample.get_collaborators_comma_delimited }}
+    <a href="{% url 'project' sample.project.slug %}">{{ sample.project }} </a>
   </div></td>
   <td>
   {% if sample.get_tags %}

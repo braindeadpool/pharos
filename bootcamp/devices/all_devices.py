@@ -11,17 +11,20 @@ def update():
     global _deviceDict
     global _deviceTuple
     _deviceList = Device.objects.filter(status=Device.PUBLISHED)
-    _deviceDict = dict((x.devicename, x) for x in _deviceList)
-    _deviceTuple = [(x, x.devicename + ": " + x.first_name + ' ' + x.last_name) for x in _deviceList]
+    _deviceDict = dict((x.name, x) for x in _deviceList)
+    _deviceTuple = [(x, x.name + ": " + x.location) for x in _deviceList]
 
 
 def getDeviceList():
+    update()
     return _deviceList
 
 def getDeviceTuple():
+    update()
     return _deviceTuple
 
 def getDeviceDictionary():
+    update()
     return _deviceDict
 
 

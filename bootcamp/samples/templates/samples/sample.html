@@ -16,7 +16,7 @@
   </ol>
   
   <sample>
-  <h2><a href="{% url 'sample' sample.slug %}">{{ sample.title }}</a></h2>
+  <h2><a href="{% url 'sample' sample.slug %}">{{ sample.name }}</a></h2>
   
   
   <div class="info">
@@ -44,14 +44,10 @@
 
 <div id="exTab3" class="container">	
 <ul  class="nav nav-pills">
-			<li class="active">
-        <a href="#1" data-toggle="tab">Sample Abstract</a>
-			</li>
-			<li><a href="#2" data-toggle="tab">Sample Description</a>
-			</li>
-			<li><a href="#3" data-toggle="tab">Collaborators</a>
-			</li>
-  		<li><a href="#4" data-toggle="tab">Materials</a>
+            <li>
+                <a href="#1" data-toggle="tab" class="active">Sample Description</a>
+            </li>
+			<li><a href="#2" data-toggle="tab">Project</a>
 			</li>
 			<li><a href="#5" data-toggle="tab">Tags</a>
 			</li>
@@ -65,26 +61,8 @@
 		</div>
 				<div class="tab-pane" id="2">
           <div class="content">
-    {{ sample.get_description_as_markdown|safe }}
+    <a class="label label-default" href="{% url 'project' sample.project.slug %}">{{ sample.project }} </a>
 	  </div>
-				</div>
-        <div class="tab-pane" id="3">
-        <ul>
-          {% for each in sample.get_collaborators %}
-          <li><span class="user">
-      <a href="{% url 'profile' each.user.username %}"><img src="{{ each.user.profile.get_picture }}"></a>
-      <a href="{% url 'profile' each.user.username %}">{{ each.user.profile.get_screen_name }}</a>
-    </span> </li>
-          {% endfor %}
-         </ul> 
-          
-				</div>
-          <div class="tab-pane" id="4">
-          <ul>
-          {% for each in sample.get_materials %}
-          <li> {{each}}</li>
-          {% endfor %}
-         </ul>
 				</div>
 				<div class="tab-pane" id="5">
           		{% if sample.get_tags %}

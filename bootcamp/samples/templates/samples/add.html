@@ -64,38 +64,6 @@
         {% endfor %}
     </div>
     {% endfor %}
-    <fieldset id="material_information" class="">
-        <legend>Add Project</legend>
-
-        <div class="col-md-12">
-            <div id="field">
-                <div id="field0">
-
-                    <!-- Text input-->
-                    <div class="form-group">
-                        <label class="col-md-3">Project*</label>
-                        <div class="col-md-8">
-                            <input type="text" name="material[]" id="material" class="form-control"
-                                   list={{form.material_name}}>
-                        </div>
-                    </div>
-                    <br><br>
-                    <hr>
-
-
-                </div><!--end field0-->
-            </div><!--end field-->
-            <!-- Button -->
-            <div class="form-group">
-                <div class="col-md-4 col-md-offset-8">
-                    <button id="add-more" name="add-more" class="btn btn-primary">Add More</button>
-                </div>
-            </div>
-            <br><br>
-        </div>
-
-    </fieldset>
-
 
     <div class="form-group">
         <button type="button" class="btn btn-primary publish">{% trans 'Publish' %}</button>

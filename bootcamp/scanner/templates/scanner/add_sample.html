@@ -67,6 +67,7 @@
       </div>
 
       <div class="col-md-9">
+          <div class="row">
           <div class="col-md-12">
             <h1>Scanner wizard</h1>
               <div class="stepwizard">
@@ -77,22 +78,68 @@
             <span class="stepwizard-text">Scan user</span>
         </div>
         <div class="stepwizard-step">
-            <a href="{% url 'scan_user' identification%}"><button type="button" class="btn btn-primary btn-circle">2</button></a>
+            <a href="{% url 'scan_sample' identification %}"><button type="button" class="btn btn-primary btn-circle">2</button></a>
             <br/>
-            <span class="stepwizard-text">Select Project</span>
+            <span class="stepwizard-text stepwizard-current">Scan Sample</span>
         </div>
         <div class="stepwizard-step">
             <button type="button" class="btn btn-success btn-circle" disabled="disabled">3</button>
             <br/>
-            <span class="stepwizard-text stepwizard-current">Collect samples</span>
+            <span class="stepwizard-text">Scan Device</span>
         </div>
     </div>
 </div>
-      <h2>Scanning samples for project: <span style="color:gray;"><em>{{ project.title }}</em></span></h2>
 
     </div>
+              </div>
+          <div class="row">
+          <h2>Adding new sample</h2>
+          <div class="col-md-9">
+              <form action="{% url 'samples_add' %}" method="post" role="form">
+    {% csrf_token %}
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+        {% include 'markdown_editor.html' with textarea='id_content' %}
+        {% endif %}
+        {{ field }}
+        {% if field.help_text %}
+        <span class="help-block">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary publish">{% trans 'Add' %}</button>
+        <a href="{% url 'samples' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+    </div>
+</form>
+
+<div class="modal fade" id="preview">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Sample Preview</h4>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
   </div>
   </div>
+
+          </div>
+      </div>
 
   <script type="text/javascript">
       $(document).ready(function() {

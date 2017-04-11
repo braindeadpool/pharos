@@ -10,7 +10,9 @@ from django.db.models import Q
 import bootcamp.core.all_users as all_users
 import markdown
 from bootcamp.projects.forms import ProjectForm, SearchForm
-from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Device, Repository
+from bootcamp.projects.models import Project, ProjectComment, Tag, Collaborator, Material, Repository
+from bootcamp.devices.models import Device
+from bootcamp.samples.models import Sample
 from bootcamp.decorators import ajax_required
 
 from bootcamp.settings import DROPBOX_CONSUMER_KEY, DROPBOX_CONSUMER_SECRET, BASE_URL, DEFAULT_REPOS
@@ -79,6 +81,7 @@ def projectsByUser(request):
 @login_required
 def project(request, slug):
     project = get_object_or_404(Project, slug=slug, status=Project.PUBLISHED)
+    project.samples = Sample.objects.filter(project=project)
     collaborators = [x.user for x in project.get_collaborators()]
     if request.user == project.create_user or request.user in collaborators:
         project.editable = True

@@ -41,7 +41,7 @@ $(document).ready(function() {
 
 	
   <div class="page-header">
-    <a href="{% url 'sample_add' %}" class="btn btn-primary pull-right">
+    <a href="{% url 'samples_add' %}" class="btn btn-primary pull-right">
       <span class="glyphicon glyphicon-pencil"></span> {% trans 'Add sample' %}
     </a>
     <a href="{% url 'sample_drafts' %}" class="btn btn-default pull-right" style="margin-right: .8em">{% trans 'Drafts' %}</a>
@@ -65,7 +65,7 @@ $(document).ready(function() {
             <tr>
                 <th>Name</th>
                 <th>Short Description</th>
-                <th>Collaborators</th>
+                <th>Project</th>
                 <th>Tags</th>
                 <th>Created By</th>
                 <th>Last Modified</th>
@@ -83,7 +83,7 @@ $(document).ready(function() {
       {% else %}
       
 	    
-          <h4 class="no-data">{% trans 'There is no published sample yet' %}. <a href="{% url 'write' %}">{% trans 'Be the first one to publish' %}!</a></h4>
+          <h4 class="no-data">{% trans 'There is no sample added yet' %}. <a href="{% url 'samples_add' %}">{% trans 'Be the first one to publish' %}!</a></h4>
         {% endif %}
       </section>
     </div>

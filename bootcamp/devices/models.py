@@ -110,18 +110,6 @@ class Device(models.Model):
     def get_collaborators(self):
         return Collaborator.objects.filter(device=self)
 
-    def get_projects(self):
-        return self.project_set.all()
-
-    def get_samples(self):
-        all = self.sample_set.all()
-        to_return = []
-        print all
-        for each in all:
-            to_return.append(each)
-        print "the samples are"
-        print to_return
-        return to_return
 
     def get_collaborators_comma_delimited(self):
         all = Collaborator.objects.filter(device=self)

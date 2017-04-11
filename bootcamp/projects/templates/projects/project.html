@@ -92,14 +92,14 @@
                             <tr>
                                 <th>Sample Name</th>
                                 <th>Sample ID</th>
-                                <th>Materials</th>
-                                <th>Categories</th>
+                                <th>Tags</th>
+                                <th>Description</th>
                             </tr>
-                            {% for each in project.get_materials %}
-                            <td>{{each.sample_name}}</td>
-                            <td>{{each.identification}}</td>
-                            <td>{{each.name}}</td>
-                            <td>{{each.category}}</td>
+                            {% for each in project.samples %}
+                                <td><a href="{% url 'sample' each.slug %}">{{each.name}}</a></td>
+                                <td>{{each.identification}}</td>
+                                <td>{{each.tags}}</td>
+                                <td>{{each.description}}</td>
                             {% endfor %}
                         </table>
                     </div>
